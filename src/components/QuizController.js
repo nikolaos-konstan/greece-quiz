@@ -16,12 +16,12 @@ const QuizController = () => {
   useEffect(() => {
     const loadRegions = async () => {
       try {
-        const response = await fetch("/data/gadm41_GRC_1.json");
+        const response = await fetch("/data/gadm41_GRC_2.json");
         const data = await response.json();
 
         // Extract region names
         const regionNames = [
-          ...new Set(data.features.map((feature) => feature.properties.NAME_1)),
+          ...new Set(data.features.map((feature) => feature.properties.NAME_2)),
         ];
 
         setRegions(regionNames);
