@@ -16,13 +16,13 @@ const QuizController = () => {
   useEffect(() => {
     const loadRegions = async () => {
       try {
-        const response = await fetch("/data/gadm41_GRC_2.json");
+        const response = await fetch("/data/nomoi_okxe.geojson");
         const data = await response.json();
 
-        // Extract region names
-        const regionNames = [
-          ...new Set(data.features.map((feature) => feature.properties.NAME_2)),
-        ];
+        // Extract region names using the English name from your new file
+        const regionNames = data.features.map(
+          (feature) => feature.properties.NAME_ENG
+        );
 
         setRegions(regionNames);
         generateQuestion(regionNames);

@@ -1,6 +1,6 @@
 // src/components/LeafletMap.js
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./LeafletMap.module.css";
 
 export default function LeafletMap({
@@ -8,6 +8,7 @@ export default function LeafletMap({
   highlightedRegion,
   correctRegion,
 }) {
+  const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [geojsonLayer, setGeojsonLayer] = useState(null);
 
@@ -24,29 +25,32 @@ export default function LeafletMap({
       // Import Leaflet library
       const L = (await import("leaflet")).default;
 
-      // Fix icon paths (common Leaflet issue in bundled environments)
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl:
-          "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-        shadowUrl:
-          "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-      });
+      // Ensure map container exists and map not already initialized
+      const mapContainer = mapRef.current;
+      if (mapContainer && !map) {
+        try {
+          // Check if map already exists
+          if (mapContainer._leaflet_map) {
+            mapContainer._leaflet_map.remove();
+          }
 
-      // Check if map container exists and map not already initialized
-      if (!map && document.getElementById("map")) {
-        // Create map
-        const mapInstance = L.map("map").setView([38.2, 24], 6);
+          // Create map with limited interactions for a simpler interface
+          const mapInstance = L.map(mapContainer, {
+            zoomControl: false, // Remove zoom controls
+            dragging: false, // Disable dragging
+            touchZoom: false, // Disable touch zoom
+            scrollWheelZoom: false, // Disable scroll wheel zoom
+            doubleClickZoom: false, // Disable double click zoom
+            boxZoom: false, // Disable box zoom
+            keyboard: false, // Disable keyboard navigation
+            attributionControl: false, // Remove attribution
+          }).setView([38.2, 24], 6);
 
-        // Add tile layer
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(mapInstance);
-
-        // Save map instance to state
-        setMap(mapInstance);
+          // Save map instance to state
+          setMap(mapInstance);
+        } catch (error) {
+          console.error("Error initializing map:", error);
+        }
       }
     };
 
@@ -77,13 +81,13 @@ export default function LeafletMap({
         const L = (await import("leaflet")).default;
 
         // Fetch GeoJSON data
-        const response = await fetch("/data/gadm41_GRC_2.json");
+        const response = await fetch("/data/nomoi_okxe.geojson");
         const data = await response.json();
 
         // Create new GeoJSON layer
         const layer = L.geoJSON(data, {
           style: (feature) => {
-            const regionName = feature.properties.NAME_2;
+            const regionName = feature.properties.NAME_ENG;
             const isHighlighted = regionName === highlightedRegion;
             const isCorrect =
               isHighlighted && highlightedRegion === correctRegion;
@@ -93,27 +97,31 @@ export default function LeafletMap({
                 ? isCorrect
                   ? "#74c476"
                   : "#fb6a4a"
-                : "#3388ff",
-              weight: 2,
+                : "#f2f2f2", // Light gray fill for regions
+              weight: 1.5, // Border thickness
               opacity: 1,
-              color: "white",
-              dashArray: "3",
+              color: "#333", // Border color
+              dashArray: "", // Solid lines
               fillOpacity: 0.7,
             };
           },
           onEachFeature: (feature, layer) => {
+            const regionName = feature.properties.NAME_ENG;
+
             // Add tooltip with region name
-            layer.bindTooltip(feature.properties.NAME_2);
+            layer.bindTooltip(regionName);
 
             // Add click handler
             layer.on("click", () => {
-              onRegionClick(feature.properties.NAME_2);
+              onRegionClick(regionName);
             });
           },
         }).addTo(map);
 
-        // Fit map to GeoJSON bounds
-        map.fitBounds(layer.getBounds());
+        // Fit map to GeoJSON bounds with some padding
+        map.fitBounds(layer.getBounds(), {
+          padding: [20, 20],
+        });
 
         // Save layer reference to state
         setGeojsonLayer(layer);
@@ -127,7 +135,7 @@ export default function LeafletMap({
 
   return (
     <div className={styles.mapContainer}>
-      <div id="map" className={styles.map}></div>
+      <div ref={mapRef} className={styles.map}></div>
     </div>
   );
 }
