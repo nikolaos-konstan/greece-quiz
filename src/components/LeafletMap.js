@@ -14,6 +14,7 @@ export default function LeafletMap({
   const geojsonLayerRef = useRef(null);
   const dataRef = useRef(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const [L, setL] = useState(null); // Store Leaflet library reference
 
   // Initialize map once on component mount
   useEffect(() => {
@@ -29,7 +30,8 @@ export default function LeafletMap({
         await import("leaflet/dist/leaflet.css");
 
         // Import Leaflet library
-        const L = (await import("leaflet")).default;
+        const leaflet = (await import("leaflet")).default;
+        setL(leaflet); // Store Leaflet reference
 
         // Ensure map container exists and map not already initialized
         const mapContainer = mapRef.current;
@@ -41,16 +43,18 @@ export default function LeafletMap({
         }
 
         // Create map with limited interactions for a simpler interface
-        const mapInstance = L.map(mapContainer, {
-          zoomControl: false,
-          dragging: false,
-          touchZoom: false,
-          scrollWheelZoom: false,
-          doubleClickZoom: false,
-          boxZoom: false,
-          keyboard: false,
-          attributionControl: false,
-        }).setView([38.2, 24], 6);
+        const mapInstance = leaflet
+          .map(mapContainer, {
+            zoomControl: false,
+            dragging: false,
+            touchZoom: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            boxZoom: false,
+            keyboard: false,
+            attributionControl: false,
+          })
+          .setView([38.2, 24], 6);
 
         // Store the map instance in a ref
         mapInstanceRef.current = mapInstance;
@@ -131,13 +135,11 @@ export default function LeafletMap({
 
   // Recreate the GeoJSON layer when the map is initialized or when correctRegions changes
   useEffect(() => {
-    if (!isMapInitialized || !mapInstanceRef.current || !dataRef.current)
+    if (!isMapInitialized || !mapInstanceRef.current || !dataRef.current || !L)
       return;
 
     const updateMap = async () => {
       try {
-        const L = (await import("leaflet")).default;
-
         // Remove existing layer if it exists
         if (geojsonLayerRef.current) {
           mapInstanceRef.current.removeLayer(geojsonLayerRef.current);
@@ -151,12 +153,19 @@ export default function LeafletMap({
           },
           onEachFeature: (feature, layer) => {
             const regionName = feature.properties.NAME_ENG;
+            const isIdentified = correctRegions.includes(regionName);
 
-            // Add tooltip with region name
-            layer.bindTooltip(regionName);
+            // Add tooltip only for correctly identified regions
+            if (isIdentified) {
+              layer.bindTooltip(regionName, {
+                permanent: false,
+                direction: "center",
+                className: styles.regionTooltip,
+              });
+            }
 
-            // Add click handler only if not already correctly identified
-            if (!correctRegions.includes(regionName)) {
+            // Only add click handlers to regions that haven't been identified yet
+            if (!isIdentified) {
               layer.on("click", () => {
                 onRegionClick(regionName);
               });
@@ -173,6 +182,23 @@ export default function LeafletMap({
 
         // Store layer in ref
         geojsonLayerRef.current = layer;
+
+        // Add CSS to remove focus outlines from map layers
+        if (!document.getElementById("leaflet-styles")) {
+          const style = document.createElement("style");
+          style.id = "leaflet-styles";
+          style.innerHTML = `
+            .leaflet-interactive {
+              outline: none !important;
+            }
+            .leaflet-container:focus,
+            .leaflet-container *:focus {
+              outline: none !important;
+              box-shadow: none !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }
       } catch (error) {
         console.error("Error updating GeoJSON layer:", error);
       }
@@ -185,6 +211,7 @@ export default function LeafletMap({
     correctRegions,
     onRegionClick,
     highlightedRegion,
+    L,
   ]);
 
   return (
