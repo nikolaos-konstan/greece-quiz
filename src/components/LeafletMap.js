@@ -1,56 +1,69 @@
 // src/components/LeafletMap.js
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./LeafletMap.module.css";
 
 export default function LeafletMap({
   onRegionClick,
   highlightedRegion,
   correctRegion,
+  correctRegions = [],
 }) {
   const mapRef = useRef(null);
-  const [map, setMap] = useState(null);
-  const [geojsonLayer, setGeojsonLayer] = useState(null);
+  const mapInstanceRef = useRef(null);
+  const geojsonLayerRef = useRef(null);
+  const dataRef = useRef(null);
+  const [isMapInitialized, setIsMapInitialized] = useState(false);
 
-  // Initialize map on first render
+  // Initialize map once on component mount
   useEffect(() => {
     // Only run on client
     if (typeof window === "undefined") return;
 
+    let isMounted = true;
+
     // Dynamically import Leaflet
     const initMap = async () => {
-      // Import Leaflet CSS
-      await import("leaflet/dist/leaflet.css");
+      try {
+        // Import Leaflet CSS
+        await import("leaflet/dist/leaflet.css");
 
-      // Import Leaflet library
-      const L = (await import("leaflet")).default;
+        // Import Leaflet library
+        const L = (await import("leaflet")).default;
 
-      // Ensure map container exists and map not already initialized
-      const mapContainer = mapRef.current;
-      if (mapContainer && !map) {
-        try {
-          // Check if map already exists
-          if (mapContainer._leaflet_map) {
-            mapContainer._leaflet_map.remove();
-          }
+        // Ensure map container exists and map not already initialized
+        const mapContainer = mapRef.current;
+        if (!mapContainer || !isMounted) return;
 
-          // Create map with limited interactions for a simpler interface
-          const mapInstance = L.map(mapContainer, {
-            zoomControl: false, // Remove zoom controls
-            dragging: false, // Disable dragging
-            touchZoom: false, // Disable touch zoom
-            scrollWheelZoom: false, // Disable scroll wheel zoom
-            doubleClickZoom: false, // Disable double click zoom
-            boxZoom: false, // Disable box zoom
-            keyboard: false, // Disable keyboard navigation
-            attributionControl: false, // Remove attribution
-          }).setView([38.2, 24], 6);
-
-          // Save map instance to state
-          setMap(mapInstance);
-        } catch (error) {
-          console.error("Error initializing map:", error);
+        // Check if map already exists and remove it
+        if (mapContainer._leaflet_map) {
+          mapContainer._leaflet_map.remove();
         }
+
+        // Create map with limited interactions for a simpler interface
+        const mapInstance = L.map(mapContainer, {
+          zoomControl: false,
+          dragging: false,
+          touchZoom: false,
+          scrollWheelZoom: false,
+          doubleClickZoom: false,
+          boxZoom: false,
+          keyboard: false,
+          attributionControl: false,
+        }).setView([38.2, 24], 6);
+
+        // Store the map instance in a ref
+        mapInstanceRef.current = mapInstance;
+
+        // Fetch GeoJSON data
+        const response = await fetch("/data/nomoi_okxe.geojson");
+        const data = await response.json();
+        dataRef.current = data;
+
+        // Set initialization flag
+        setIsMapInitialized(true);
+      } catch (error) {
+        console.error("Error initializing map:", error);
       }
     };
 
@@ -58,52 +71,83 @@ export default function LeafletMap({
 
     // Cleanup function
     return () => {
-      if (map) {
-        map.remove();
-        setMap(null);
-        setGeojsonLayer(null);
+      isMounted = false;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        geojsonLayerRef.current = null;
       }
     };
   }, []);
 
-  // Load GeoJSON data and handle highlighting when map is ready
+  // Style function memoized to prevent unnecessary recalculation
+  const getRegionStyle = useCallback(
+    (regionName) => {
+      // Check if region is in the correctly identified list
+      const isCorrectlyIdentified = correctRegions.includes(regionName);
+
+      // Check if region is currently highlighted
+      const isHighlighted = regionName === highlightedRegion;
+
+      // Determine if current highlight is correct
+      const isCurrentCorrect =
+        isHighlighted && highlightedRegion === correctRegion;
+
+      // Set style based on region status
+      if (isCorrectlyIdentified) {
+        // Already correctly identified regions stay green
+        return {
+          fillColor: "#74c476", // Green
+          weight: 1.5,
+          opacity: 1,
+          color: "#333",
+          dashArray: "",
+          fillOpacity: 0.7,
+        };
+      } else if (isHighlighted) {
+        // Currently highlighted region (not yet correctly identified)
+        return {
+          fillColor: isCurrentCorrect ? "#74c476" : "#fb6a4a", // Green if correct, red if wrong
+          weight: 1.5,
+          opacity: 1,
+          color: "#333",
+          dashArray: "",
+          fillOpacity: 0.7,
+        };
+      } else {
+        // Default style for non-highlighted, non-identified regions
+        return {
+          fillColor: "#f2f2f2", // Light gray
+          weight: 1.5,
+          opacity: 1,
+          color: "#333",
+          dashArray: "",
+          fillOpacity: 0.7,
+        };
+      }
+    },
+    [highlightedRegion, correctRegion, correctRegions]
+  );
+
+  // Recreate the GeoJSON layer when the map is initialized or when correctRegions changes
   useEffect(() => {
-    if (!map) return;
+    if (!isMapInitialized || !mapInstanceRef.current || !dataRef.current)
+      return;
 
-    const loadGeoJSON = async () => {
+    const updateMap = async () => {
       try {
-        // Remove existing GeoJSON layer if present
-        if (geojsonLayer) {
-          map.removeLayer(geojsonLayer);
-        }
-
-        // Import Leaflet again (needed for scope)
         const L = (await import("leaflet")).default;
 
-        // Fetch GeoJSON data
-        const response = await fetch("/data/nomoi_okxe.geojson");
-        const data = await response.json();
+        // Remove existing layer if it exists
+        if (geojsonLayerRef.current) {
+          mapInstanceRef.current.removeLayer(geojsonLayerRef.current);
+        }
 
-        // Create new GeoJSON layer
-        const layer = L.geoJSON(data, {
+        // Create a new layer with updated event handlers
+        const layer = L.geoJSON(dataRef.current, {
           style: (feature) => {
             const regionName = feature.properties.NAME_ENG;
-            const isHighlighted = regionName === highlightedRegion;
-            const isCorrect =
-              isHighlighted && highlightedRegion === correctRegion;
-
-            return {
-              fillColor: isHighlighted
-                ? isCorrect
-                  ? "#74c476"
-                  : "#fb6a4a"
-                : "#f2f2f2", // Light gray fill for regions
-              weight: 1.5, // Border thickness
-              opacity: 1,
-              color: "#333", // Border color
-              dashArray: "", // Solid lines
-              fillOpacity: 0.7,
-            };
+            return getRegionStyle(regionName);
           },
           onEachFeature: (feature, layer) => {
             const regionName = feature.properties.NAME_ENG;
@@ -111,27 +155,37 @@ export default function LeafletMap({
             // Add tooltip with region name
             layer.bindTooltip(regionName);
 
-            // Add click handler
-            layer.on("click", () => {
-              onRegionClick(regionName);
-            });
+            // Add click handler only if not already correctly identified
+            if (!correctRegions.includes(regionName)) {
+              layer.on("click", () => {
+                onRegionClick(regionName);
+              });
+            }
           },
-        }).addTo(map);
+        }).addTo(mapInstanceRef.current);
 
-        // Fit map to GeoJSON bounds with some padding
-        map.fitBounds(layer.getBounds(), {
-          padding: [20, 20],
-        });
+        // Fit map to GeoJSON bounds with some padding (only on initial creation)
+        if (!geojsonLayerRef.current) {
+          mapInstanceRef.current.fitBounds(layer.getBounds(), {
+            padding: [20, 20],
+          });
+        }
 
-        // Save layer reference to state
-        setGeojsonLayer(layer);
+        // Store layer in ref
+        geojsonLayerRef.current = layer;
       } catch (error) {
-        console.error("Error loading GeoJSON:", error);
+        console.error("Error updating GeoJSON layer:", error);
       }
     };
 
-    loadGeoJSON();
-  }, [map, highlightedRegion, correctRegion, onRegionClick]);
+    updateMap();
+  }, [
+    isMapInitialized,
+    getRegionStyle,
+    correctRegions,
+    onRegionClick,
+    highlightedRegion,
+  ]);
 
   return (
     <div className={styles.mapContainer}>
