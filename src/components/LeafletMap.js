@@ -42,17 +42,19 @@ export default function LeafletMap({
           mapContainer._leaflet_map.remove();
         }
 
-        // Create map with limited interactions for a simpler interface
+        // Create map with zoom functionality enabled, but without default controls
         const mapInstance = leaflet
           .map(mapContainer, {
-            zoomControl: false,
-            dragging: false,
-            touchZoom: false,
-            scrollWheelZoom: false,
-            doubleClickZoom: false,
-            boxZoom: false,
-            keyboard: false,
+            zoomControl: false, // Disable default zoom controls
+            dragging: true, // Enable dragging
+            touchZoom: true, // Enable touch zoom
+            scrollWheelZoom: true, // Enable scroll wheel zoom
+            doubleClickZoom: true, // Enable double click zoom
+            boxZoom: true, // Enable box zoom
+            keyboard: true, // Enable keyboard navigation
             attributionControl: false,
+            minZoom: 6, // Set minimum zoom level (starting point)
+            maxZoom: 10, // Set maximum zoom level (4x from starting point)
           })
           .setView([38.2, 24], 6);
 
@@ -182,6 +184,72 @@ export default function LeafletMap({
 
         // Store layer in ref
         geojsonLayerRef.current = layer;
+
+        // Add custom controls for zoom in/out
+        if (!document.getElementById("custom-zoom-controls")) {
+          const zoomControlsContainer = L.control({ position: "topright" });
+
+          zoomControlsContainer.onAdd = function () {
+            const container = L.DomUtil.create(
+              "div",
+              styles.customZoomControls
+            );
+            container.id = "custom-zoom-controls";
+
+            const zoomInButton = L.DomUtil.create(
+              "button",
+              styles.zoomButton,
+              container
+            );
+            zoomInButton.innerHTML = "+";
+            zoomInButton.title = "Zoom in";
+
+            const zoomOutButton = L.DomUtil.create(
+              "button",
+              styles.zoomButton,
+              container
+            );
+            zoomOutButton.innerHTML = "−";
+            zoomOutButton.title = "Zoom out";
+
+            const resetZoomButton = L.DomUtil.create(
+              "button",
+              `${styles.zoomButton} ${styles.resetButton}`,
+              container
+            );
+            resetZoomButton.innerHTML = "⟲";
+            resetZoomButton.title = "Reset zoom";
+
+            L.DomEvent.on(zoomInButton, "click", function () {
+              // Check if we can zoom in further
+              if (
+                mapInstanceRef.current.getZoom() <
+                mapInstanceRef.current.getMaxZoom()
+              ) {
+                mapInstanceRef.current.zoomIn();
+              }
+            });
+
+            L.DomEvent.on(zoomOutButton, "click", function () {
+              // Check if we can zoom out further
+              if (
+                mapInstanceRef.current.getZoom() >
+                mapInstanceRef.current.getMinZoom()
+              ) {
+                mapInstanceRef.current.zoomOut();
+              }
+            });
+
+            L.DomEvent.on(resetZoomButton, "click", function () {
+              // Reset to initial view
+              mapInstanceRef.current.setView([38.2, 24], 6);
+            });
+
+            return container;
+          };
+
+          zoomControlsContainer.addTo(mapInstanceRef.current);
+        }
 
         // Add CSS to remove focus outlines from map layers
         if (!document.getElementById("leaflet-styles")) {
