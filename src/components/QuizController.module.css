@@ -3,6 +3,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
 }
 
 .scoreBoard {
@@ -13,22 +14,35 @@
 }
 
 .feedback {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
   margin-top: 15px;
   padding: 10px;
   border-radius: 5px;
   text-align: center;
   font-weight: bold;
   transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 .correct {
-  background-color: rgba(116, 196, 118, 0.3);
+  background-color: rgba(116, 196, 118, 0.9);
   color: #2c7a2e;
 }
 
 .incorrect {
-  background-color: rgba(251, 106, 74, 0.3);
+  background-color: rgba(251, 106, 74, 0.9);
   color: #9c2b2b;
+}
+
+/* Add a placeholder to prevent layout shifts */
+.feedbackPlaceholder {
+  height: 50px;
+  margin-top: 15px;
+  visibility: hidden;
 }
 
 .gameComplete {
@@ -82,12 +96,12 @@
   }
 
   .correct {
-    background-color: rgba(76, 175, 80, 0.2);
+    background-color: rgba(76, 175, 80, 0.8);
     color: #8bcc8f;
   }
 
   .incorrect {
-    background-color: rgba(244, 67, 54, 0.2);
+    background-color: rgba(244, 67, 54, 0.8);
     color: #f77;
   }
 }

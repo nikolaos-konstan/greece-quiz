@@ -139,6 +139,7 @@ const QuizController = () => {
         correctRegions={correctRegions}
       />
 
+      {/* Fixed-position feedback that doesn't affect layout */}
       {isCorrect !== null && (
         <div
           className={`${styles.feedback} ${
@@ -150,6 +151,9 @@ const QuizController = () => {
             : `Incorrect! Try again to find ${currentQuestion}`}
         </div>
       )}
+
+      {/* Placeholder to maintain consistent layout */}
+      <div className={styles.feedbackPlaceholder}></div>
     </div>
   );
 };
