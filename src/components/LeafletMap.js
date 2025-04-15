@@ -8,6 +8,7 @@ export default function LeafletMap({
   highlightedRegion,
   correctRegion,
   correctRegions = [],
+  language = "en", // Default to English
 }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -86,9 +87,21 @@ export default function LeafletMap({
     };
   }, []);
 
+  // Get region name based on current language
+  const getRegionName = useCallback(
+    (feature) => {
+      return language === "en"
+        ? feature.properties.NAME_ENG
+        : feature.properties.NAME_GR;
+    },
+    [language]
+  );
+
   // Style function memoized to prevent unnecessary recalculation
   const getRegionStyle = useCallback(
-    (regionName) => {
+    (feature) => {
+      const regionName = getRegionName(feature);
+
       // Check if region is in the correctly identified list
       const isCorrectlyIdentified = correctRegions.includes(regionName);
 
@@ -132,10 +145,10 @@ export default function LeafletMap({
         };
       }
     },
-    [highlightedRegion, correctRegion, correctRegions]
+    [highlightedRegion, correctRegion, correctRegions, getRegionName]
   );
 
-  // Recreate the GeoJSON layer when the map is initialized or when correctRegions changes
+  // Recreate the GeoJSON layer when the map is initialized or when correctRegions/language changes
   useEffect(() => {
     if (!isMapInitialized || !mapInstanceRef.current || !dataRef.current || !L)
       return;
@@ -150,11 +163,10 @@ export default function LeafletMap({
         // Create a new layer with updated event handlers
         const layer = L.geoJSON(dataRef.current, {
           style: (feature) => {
-            const regionName = feature.properties.NAME_ENG;
-            return getRegionStyle(regionName);
+            return getRegionStyle(feature);
           },
           onEachFeature: (feature, layer) => {
-            const regionName = feature.properties.NAME_ENG;
+            const regionName = getRegionName(feature);
             const isIdentified = correctRegions.includes(regionName);
 
             // Add tooltip only for correctly identified regions
@@ -280,6 +292,8 @@ export default function LeafletMap({
     onRegionClick,
     highlightedRegion,
     L,
+    language,
+    getRegionName,
   ]);
 
   return (

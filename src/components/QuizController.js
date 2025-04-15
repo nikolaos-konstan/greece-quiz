@@ -7,6 +7,7 @@ import styles from "./QuizController.module.css";
 
 const QuizController = () => {
   const [regions, setRegions] = useState([]);
+  const [regionsData, setRegionsData] = useState([]); // Store full region data
   const [remainingRegions, setRemainingRegions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [highlightedRegion, setHighlightedRegion] = useState(null);
@@ -14,6 +15,7 @@ const QuizController = () => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [errors, setErrors] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
+  const [language, setLanguage] = useState("en"); // 'en' for English, 'el' for Greek
 
   // Load regions data
   useEffect(() => {
@@ -22,9 +24,17 @@ const QuizController = () => {
         const response = await fetch("/data/nomoi_okxe.geojson");
         const data = await response.json();
 
-        // Extract region names using the English name from your new file
-        const regionNames = data.features.map(
-          (feature) => feature.properties.NAME_ENG
+        // Store full feature data for language switching
+        const featuresData = data.features.map((feature) => ({
+          nameGr: feature.properties.NAME_GR,
+          nameEng: feature.properties.NAME_ENG,
+          id: feature.properties.ESYE_ID,
+        }));
+        setRegionsData(featuresData);
+
+        // Extract region names based on current language
+        const regionNames = featuresData.map((feature) =>
+          language === "en" ? feature.nameEng : feature.nameGr
         );
 
         setRegions(regionNames);
@@ -36,7 +46,7 @@ const QuizController = () => {
     };
 
     loadRegions();
-  }, []);
+  }, [language]); // Re-fetch when language changes
 
   // Generate a new question
   const generateQuestion = (availableRegions) => {
@@ -86,16 +96,33 @@ const QuizController = () => {
     }
   };
 
+  // Handle language change
+  const toggleLanguage = () => {
+    const newLanguage = language === "en" ? "el" : "en";
+    setLanguage(newLanguage);
+
+    // Reset the game when changing language
+    setCorrectRegions([]);
+    setErrors(0);
+    setGameComplete(false);
+    setIsCorrect(null);
+    setHighlightedRegion(null);
+  };
+
   // Get user's rank based on errors
   const getUserRank = () => {
     const totalRegions = regions.length;
     const errorRate = errors / totalRegions;
 
-    if (errorRate === 0) return "Geography Master";
-    if (errorRate < 0.1) return "Geography Expert";
-    if (errorRate < 0.25) return "Geography Enthusiast";
-    if (errorRate < 0.5) return "Geography Student";
-    return "Geography Novice";
+    if (errorRate === 0)
+      return language === "en" ? "Geography Master" : "Γεωγραφικός Δάσκαλος";
+    if (errorRate < 0.1)
+      return language === "en" ? "Geography Expert" : "Ειδικός Γεωγραφίας";
+    if (errorRate < 0.25)
+      return language === "en" ? "Geography Enthusiast" : "Λάτρης Γεωγραφίας";
+    if (errorRate < 0.5)
+      return language === "en" ? "Geography Student" : "Μαθητής Γεωγραφίας";
+    return language === "en" ? "Geography Novice" : "Αρχάριος Γεωγραφίας";
   };
 
   // Reset the game
@@ -113,23 +140,37 @@ const QuizController = () => {
 
   return (
     <div className={styles.quizContainer}>
-      <div className={styles.scoreBoard}>Errors: {errors}</div>
+      <div className={styles.controls}>
+        <button
+          onClick={toggleLanguage}
+          className={styles.languageToggle}
+          title={language === "en" ? "Switch to Greek" : "Switch to English"}
+        >
+          {language === "en" ? "ΕΛ" : "ENG"}
+        </button>
+        <div className={styles.scoreBoard}>Errors: {errors}</div>
+      </div>
 
       {gameComplete ? (
         <div className={styles.gameComplete}>
-          <h2>Quiz Complete!</h2>
+          <h2>
+            {language === "en" ? "Quiz Complete!" : "Το Κουίζ Ολοκληρώθηκε!"}
+          </h2>
           <p>
-            You identified all {regions.length} regions with {errors} errors.
+            {language === "en"
+              ? `You identified all ${regions.length} regions with ${errors} errors.`
+              : `Αναγνωρίσατε και τις ${regions.length} περιοχές με ${errors} λάθη.`}
           </p>
           <p>
-            Your rank: <strong>{getUserRank()}</strong>
+            {language === "en" ? "Your rank: " : "Η κατάταξή σας: "}
+            <strong>{getUserRank()}</strong>
           </p>
           <button className={styles.resetButton} onClick={handleReset}>
-            Play Again
+            {language === "en" ? "Play Again" : "Παίξτε Ξανά"}
           </button>
         </div>
       ) : (
-        <Question regionName={currentQuestion} />
+        <Question regionName={currentQuestion} language={language} />
       )}
 
       <LeafletMap
@@ -137,6 +178,7 @@ const QuizController = () => {
         highlightedRegion={highlightedRegion}
         correctRegion={currentQuestion}
         correctRegions={correctRegions}
+        language={language}
       />
 
       {/* Fixed-position feedback that doesn't affect layout */}
@@ -147,8 +189,12 @@ const QuizController = () => {
           }`}
         >
           {isCorrect
-            ? "Correct!"
-            : `Incorrect! Try again to find ${currentQuestion}`}
+            ? language === "en"
+              ? "Correct!"
+              : "Σωστά!"
+            : language === "en"
+            ? `Incorrect! Try again to find ${currentQuestion}`
+            : `Λάθος! Προσπαθήστε ξανά να βρείτε ${currentQuestion}`}
         </div>
       )}
 

@@ -6,11 +6,32 @@
   position: relative;
 }
 
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .scoreBoard {
   text-align: right;
   font-size: 18px;
-  margin-bottom: 10px;
   font-weight: bold;
+}
+
+.languageToggle {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.languageToggle:hover {
+  background-color: #e0e0e0;
 }
 
 .feedback {
@@ -104,25 +125,45 @@
     background-color: rgba(244, 67, 54, 0.8);
     color: #f77;
   }
+
+  .languageToggle {
+    background-color: #333;
+    color: #f0f0f0;
+    border-color: #555;
+  }
+
+  .languageToggle:hover {
+    background-color: #444;
+  }
 }
 
-/* Controls for future language toggle and difficulty features */
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .quizContainer {
+    padding: 32px;
+    padding-bottom: 80px;
+  }
 
-.languageToggle {
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
+  .main {
+    align-items: center;
+  }
 
-.languageToggle:hover {
-  background-color: #e0e0e0;
+  .ctas {
+    flex-direction: column;
+  }
+
+  .ctas a {
+    font-size: 14px;
+    height: 40px;
+    padding: 0 16px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .scoreBoard {
+    text-align: center;
+  }
 }
