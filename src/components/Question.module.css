@@ -4,8 +4,106 @@
   text-align: center;
 }
 
+.questionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 20px;
+}
+
+.questionHeader h2 {
+  margin: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.skipButton {
+  padding: 8px 16px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.skipButton:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+.skipButton:active {
+  transform: translateY(0);
+}
+
 .regionName {
   font-size: 24px;
   font-weight: bold;
-  color: #333;
+  color: var(--foreground);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.skippedBadge {
+  font-size: 14px;
+  font-weight: normal;
+  background-color: #ffc107;
+  color: #856404;
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skipButton {
+    background-color: #495057;
+  }
+
+  .skipButton:hover {
+    background-color: #3d4247;
+  }
+
+  .skippedBadge {
+    background-color: #f39c12;
+    color: #2c1810;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .questionHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .questionHeader h2 {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .skipButton {
+    align-self: center;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  .regionName {
+    font-size: 20px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .skippedBadge {
+    font-size: 13px;
+  }
 }

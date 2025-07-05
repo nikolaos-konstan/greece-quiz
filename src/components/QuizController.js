@@ -34,10 +34,14 @@ const QuizController = () => {
     correctRegions,
     isCorrect,
     errors,
+    skips,
     gameComplete,
+    isSkippedPhase,
     remainingRegions,
+    skippedRegions,
     totalRegions,
     handleRegionClick,
+    handleSkipQuestion,
     resetQuiz,
     getUserRank,
   } = useQuizLogic(regionsData, language);
@@ -128,6 +132,12 @@ const QuizController = () => {
 
         <div className={styles.scoreBoard}>
           {language === "en" ? "Errors" : "Λάθη"}: {errors}
+          {skips > 0 && (
+            <span className={styles.skipCount}>
+              {" • "}
+              {language === "en" ? "Skips" : "Παραλείψεις"}: {skips}
+            </span>
+          )}
         </div>
       </div>
 
@@ -135,11 +145,23 @@ const QuizController = () => {
       <div className={styles.progressInfo}>
         {language === "en"
           ? `${
-              totalRegions - remainingRegions
-            } / ${totalRegions} regions identified`
+              totalRegions - remainingRegions - skippedRegions
+            } identified, ${skippedRegions} skipped, ${
+              remainingRegions + skippedRegions
+            } remaining`
           : `${
-              totalRegions - remainingRegions
-            } / ${totalRegions} περιοχές αναγνωρίστηκαν`}
+              totalRegions - remainingRegions - skippedRegions
+            } αναγνωρίστηκαν, ${skippedRegions} παραλείφθηκαν, ${
+              remainingRegions + skippedRegions
+            } απομένουν`}
+        {isSkippedPhase && (
+          <span className={styles.phaseIndicator}>
+            {" • "}
+            {language === "en"
+              ? "Reviewing skipped regions"
+              : "Επανεξέταση παραλειφθέντων περιοχών"}
+          </span>
+        )}
       </div>
 
       {/* Game Complete Screen */}
@@ -170,7 +192,12 @@ const QuizController = () => {
           </div>
         </div>
       ) : (
-        <Question regionName={currentQuestion} language={language} />
+        <Question
+          regionName={currentQuestion}
+          language={language}
+          onSkip={handleSkipQuestion}
+          isSkippedPhase={isSkippedPhase}
+        />
       )}
 
       {/* Map Component */}
