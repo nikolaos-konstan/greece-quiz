@@ -6,93 +6,129 @@
   position: relative;
 }
 
-.controls {
+/* Header Section */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.backButton {
+  padding: 8px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.backButton:hover {
+  background-color: #e9ecef;
+  border-color: #bbb;
+}
+
+.quizTitle {
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+  color: var(--foreground);
 }
 
 .scoreBoard {
   text-align: right;
   font-size: 18px;
   font-weight: bold;
+  color: var(--foreground);
 }
 
-.languageToggle {
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.languageToggle:hover {
-  background-color: #e0e0e0;
-}
-
-.feedback {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 400px;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 5px;
+/* Progress Information */
+.progressInfo {
   text-align: center;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  z-index: 1000;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #666;
+  font-weight: 500;
 }
 
-.correct {
-  background-color: rgba(116, 196, 118, 0.9);
-  color: #2c7a2e;
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
-.incorrect {
-  background-color: rgba(251, 106, 74, 0.9);
-  color: #9c2b2b;
+.loadingText {
+  font-size: 18px;
+  color: var(--foreground);
 }
 
-/* Add a placeholder to prevent layout shifts */
-.feedbackPlaceholder {
-  height: 50px;
-  margin-top: 15px;
-  visibility: hidden;
+/* Error State */
+.errorContainer {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
+.errorTitle {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.errorMessage {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Game Complete Section */
 .gameComplete {
   text-align: center;
   margin: 20px 0 30px;
-  padding: 20px;
+  padding: 25px;
   background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .gameComplete h2 {
   color: #333;
   margin-bottom: 15px;
+  font-size: 28px;
 }
 
 .gameComplete p {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 18px;
+  color: #555;
+}
+
+.gameCompleteButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+  flex-wrap: wrap;
 }
 
 .resetButton {
-  margin-top: 15px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   background-color: #4a90e2;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -101,11 +137,63 @@
   background-color: #357abd;
 }
 
-/* Dark mode support */
+.settingsButton {
+  padding: 12px 24px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.settingsButton:hover {
+  background-color: #5a6268;
+}
+
+/* Feedback System */
+.feedback {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.correct {
+  background-color: rgba(116, 196, 118, 0.95);
+  color: #2c7a2e;
+  border: 1px solid #74c476;
+}
+
+.incorrect {
+  background-color: rgba(251, 106, 74, 0.95);
+  color: #9c2b2b;
+  border: 1px solid #fb6a4a;
+}
+
+.feedbackPlaceholder {
+  height: 50px;
+  margin-top: 15px;
+  visibility: hidden;
+}
+
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   .gameComplete {
     background-color: #2a2a2a;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   }
 
   .gameComplete h2 {
@@ -116,54 +204,98 @@
     color: #d0d0d0;
   }
 
-  .correct {
-    background-color: rgba(76, 175, 80, 0.8);
-    color: #8bcc8f;
+  .progressInfo {
+    color: #aaa;
   }
 
-  .incorrect {
-    background-color: rgba(244, 67, 54, 0.8);
-    color: #f77;
+  .errorTitle {
+    color: #f44336;
   }
 
-  .languageToggle {
+  .errorMessage {
+    color: #ccc;
+  }
+
+  .backButton {
     background-color: #333;
     color: #f0f0f0;
     border-color: #555;
   }
 
-  .languageToggle:hover {
+  .backButton:hover {
     background-color: #444;
+    border-color: #666;
+  }
+
+  .correct {
+    background-color: rgba(76, 175, 80, 0.9);
+    color: #a5d6a7;
+    border-color: #4caf50;
+  }
+
+  .incorrect {
+    background-color: rgba(244, 67, 54, 0.9);
+    color: #ef9a9a;
+    border-color: #f44336;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
+/* Responsive Design */
+@media (max-width: 768px) {
   .quizContainer {
-    padding: 32px;
-    padding-bottom: 80px;
+    padding: 15px;
   }
 
-  .main {
-    align-items: center;
-  }
-
-  .ctas {
+  .header {
     flex-direction: column;
+    text-align: center;
+    gap: 15px;
   }
 
-  .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
+  .quizTitle {
+    font-size: 20px;
+    order: -1;
   }
 
-  .controls {
-    flex-direction: column;
-    gap: 10px;
+  .backButton {
+    align-self: flex-start;
   }
 
   .scoreBoard {
     text-align: center;
+  }
+
+  .gameCompleteButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .resetButton,
+  .settingsButton {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .feedback {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quizContainer {
+    padding: 10px;
+  }
+
+  .gameComplete {
+    padding: 20px 15px;
+  }
+
+  .gameComplete h2 {
+    font-size: 24px;
+  }
+
+  .gameComplete p {
+    font-size: 16px;
   }
 }

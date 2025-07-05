@@ -1,0 +1,196 @@
+/* src/components/QuizSettings.module.css */
+.settingsContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: var(--foreground);
+}
+
+.settingsCard {
+  background-color: var(--background);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle {
+  font-size: 24px;
+  margin-bottom: 25px;
+  color: var(--foreground);
+}
+
+.settingGroup {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.label {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: var(--foreground);
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.radioLabel {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radioLabel:hover {
+  border-color: #4a90e2;
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.radioInput {
+  margin-bottom: 8px;
+  transform: scale(1.2);
+}
+
+.radioInput:checked + .radioText {
+  color: #4a90e2;
+  font-weight: bold;
+}
+
+.radioLabel:has(.radioInput:checked) {
+  border-color: #4a90e2;
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+.radioText {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  transition: color 0.2s ease;
+}
+
+.description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.languageToggle {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.languageButton {
+  flex: 1;
+  padding: 12px 20px;
+  background-color: var(--background);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--foreground);
+}
+
+.languageButton:hover {
+  background-color: rgba(74, 144, 226, 0.1);
+}
+
+.languageButton.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.startButton {
+  width: 100%;
+  padding: 15px 30px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s ease;
+}
+
+.startButton:hover:not(:disabled) {
+  background-color: #357abd;
+}
+
+.startButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .settingsCard {
+    border-color: #333;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+  }
+
+  .radioLabel {
+    border-color: #444;
+  }
+
+  .radioLabel:hover {
+    border-color: #4a90e2;
+    background-color: rgba(74, 144, 226, 0.1);
+  }
+
+  .description {
+    color: #aaa;
+  }
+
+  .languageToggle {
+    border-color: #444;
+  }
+
+  .languageButton:hover {
+    background-color: rgba(74, 144, 226, 0.2);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .settingsContainer {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .settingsCard {
+    padding: 20px;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+  }
+
+  .radioGroup {
+    gap: 12px;
+  }
+
+  .radioLabel {
+    padding: 12px;
+  }
+}

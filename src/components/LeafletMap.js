@@ -4,70 +4,55 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./LeafletMap.module.css";
 
 export default function LeafletMap({
+  geoJsonData,
   onRegionClick,
   highlightedRegion,
   correctRegion,
   correctRegions = [],
-  language = "en", // Default to English
+  language = "en",
+  config,
 }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const geojsonLayerRef = useRef(null);
-  const dataRef = useRef(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
-  const [L, setL] = useState(null); // Store Leaflet library reference
+  const [L, setL] = useState(null);
 
   // Initialize map once on component mount
   useEffect(() => {
-    // Only run on client
     if (typeof window === "undefined") return;
 
     let isMounted = true;
 
-    // Dynamically import Leaflet
     const initMap = async () => {
       try {
-        // Import Leaflet CSS
         await import("leaflet/dist/leaflet.css");
-
-        // Import Leaflet library
         const leaflet = (await import("leaflet")).default;
-        setL(leaflet); // Store Leaflet reference
+        setL(leaflet);
 
-        // Ensure map container exists and map not already initialized
         const mapContainer = mapRef.current;
         if (!mapContainer || !isMounted) return;
 
-        // Check if map already exists and remove it
         if (mapContainer._leaflet_map) {
           mapContainer._leaflet_map.remove();
         }
 
-        // Create map with zoom functionality enabled, but without default controls
         const mapInstance = leaflet
           .map(mapContainer, {
-            zoomControl: false, // Disable default zoom controls
-            dragging: true, // Enable dragging
-            touchZoom: true, // Enable touch zoom
-            scrollWheelZoom: true, // Enable scroll wheel zoom
-            doubleClickZoom: true, // Enable double click zoom
-            boxZoom: true, // Enable box zoom
-            keyboard: true, // Enable keyboard navigation
+            zoomControl: false,
+            dragging: true,
+            touchZoom: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            boxZoom: true,
+            keyboard: true,
             attributionControl: false,
-            minZoom: 6, // Set minimum zoom level (starting point)
-            maxZoom: 10, // Set maximum zoom level (4x from starting point)
+            minZoom: 6,
+            maxZoom: 10,
           })
           .setView([38.2, 24], 6);
 
-        // Store the map instance in a ref
         mapInstanceRef.current = mapInstance;
-
-        // Fetch GeoJSON data
-        const response = await fetch("/data/nomoi_okxe.geojson");
-        const data = await response.json();
-        dataRef.current = data;
-
-        // Set initialization flag
         setIsMapInitialized(true);
       } catch (error) {
         console.error("Error initializing map:", error);
@@ -76,7 +61,6 @@ export default function LeafletMap({
 
     initMap();
 
-    // Cleanup function
     return () => {
       isMounted = false;
       if (mapInstanceRef.current) {
@@ -87,36 +71,29 @@ export default function LeafletMap({
     };
   }, []);
 
-  // Get region name based on current language
+  // Get region name based on current language and config
   const getRegionName = useCallback(
     (feature) => {
-      return language === "en"
-        ? feature.properties.NAME_ENG
-        : feature.properties.NAME_GR;
+      if (!config) return "";
+
+      const nameProperty = config.nameProperties[language];
+      return feature.properties[nameProperty] || "";
     },
-    [language]
+    [language, config]
   );
 
-  // Style function memoized to prevent unnecessary recalculation
+  // Style function for regions
   const getRegionStyle = useCallback(
     (feature) => {
       const regionName = getRegionName(feature);
-
-      // Check if region is in the correctly identified list
       const isCorrectlyIdentified = correctRegions.includes(regionName);
-
-      // Check if region is currently highlighted
       const isHighlighted = regionName === highlightedRegion;
-
-      // Determine if current highlight is correct
       const isCurrentCorrect =
         isHighlighted && highlightedRegion === correctRegion;
 
-      // Set style based on region status
       if (isCorrectlyIdentified) {
-        // Already correctly identified regions stay green
         return {
-          fillColor: "#74c476", // Green
+          fillColor: "#74c476",
           weight: 1.5,
           opacity: 1,
           color: "#333",
@@ -124,9 +101,8 @@ export default function LeafletMap({
           fillOpacity: 0.7,
         };
       } else if (isHighlighted) {
-        // Currently highlighted region (not yet correctly identified)
         return {
-          fillColor: isCurrentCorrect ? "#74c476" : "#fb6a4a", // Green if correct, red if wrong
+          fillColor: isCurrentCorrect ? "#74c476" : "#fb6a4a",
           weight: 1.5,
           opacity: 1,
           color: "#333",
@@ -134,9 +110,8 @@ export default function LeafletMap({
           fillOpacity: 0.7,
         };
       } else {
-        // Default style for non-highlighted, non-identified regions
         return {
-          fillColor: "#f2f2f2", // Light gray
+          fillColor: "#f2f2f2",
           weight: 1.5,
           opacity: 1,
           color: "#333",
@@ -148,28 +123,32 @@ export default function LeafletMap({
     [highlightedRegion, correctRegion, correctRegions, getRegionName]
   );
 
-  // Recreate the GeoJSON layer when the map is initialized or when correctRegions/language changes
+  // Update map when data or settings change
   useEffect(() => {
-    if (!isMapInitialized || !mapInstanceRef.current || !dataRef.current || !L)
+    if (
+      !isMapInitialized ||
+      !mapInstanceRef.current ||
+      !geoJsonData ||
+      !L ||
+      !config
+    )
       return;
 
     const updateMap = async () => {
       try {
-        // Remove existing layer if it exists
+        // Remove existing layer
         if (geojsonLayerRef.current) {
           mapInstanceRef.current.removeLayer(geojsonLayerRef.current);
         }
 
-        // Create a new layer with updated event handlers
-        const layer = L.geoJSON(dataRef.current, {
-          style: (feature) => {
-            return getRegionStyle(feature);
-          },
+        // Create new layer
+        const layer = L.geoJSON(geoJsonData, {
+          style: (feature) => getRegionStyle(feature),
           onEachFeature: (feature, layer) => {
             const regionName = getRegionName(feature);
             const isIdentified = correctRegions.includes(regionName);
 
-            // Add tooltip only for correctly identified regions
+            // Add tooltip for identified regions
             if (isIdentified) {
               layer.bindTooltip(regionName, {
                 permanent: false,
@@ -178,8 +157,8 @@ export default function LeafletMap({
               });
             }
 
-            // Only add click handlers to regions that haven't been identified yet
-            if (!isIdentified) {
+            // Add click handlers to unidentified regions
+            if (!isIdentified && regionName) {
               layer.on("click", () => {
                 onRegionClick(regionName);
               });
@@ -187,17 +166,16 @@ export default function LeafletMap({
           },
         }).addTo(mapInstanceRef.current);
 
-        // Fit map to GeoJSON bounds with some padding (only on initial creation)
+        // Fit map to bounds on first creation
         if (!geojsonLayerRef.current) {
           mapInstanceRef.current.fitBounds(layer.getBounds(), {
             padding: [20, 20],
           });
         }
 
-        // Store layer in ref
         geojsonLayerRef.current = layer;
 
-        // Add custom controls for zoom in/out
+        // Add custom zoom controls
         if (!document.getElementById("custom-zoom-controls")) {
           const zoomControlsContainer = L.control({ position: "topright" });
 
@@ -233,7 +211,6 @@ export default function LeafletMap({
             resetZoomButton.title = "Reset zoom";
 
             L.DomEvent.on(zoomInButton, "click", function () {
-              // Check if we can zoom in further
               if (
                 mapInstanceRef.current.getZoom() <
                 mapInstanceRef.current.getMaxZoom()
@@ -243,7 +220,6 @@ export default function LeafletMap({
             });
 
             L.DomEvent.on(zoomOutButton, "click", function () {
-              // Check if we can zoom out further
               if (
                 mapInstanceRef.current.getZoom() >
                 mapInstanceRef.current.getMinZoom()
@@ -253,7 +229,6 @@ export default function LeafletMap({
             });
 
             L.DomEvent.on(resetZoomButton, "click", function () {
-              // Reset to initial view
               mapInstanceRef.current.setView([38.2, 24], 6);
             });
 
@@ -263,7 +238,7 @@ export default function LeafletMap({
           zoomControlsContainer.addTo(mapInstanceRef.current);
         }
 
-        // Add CSS to remove focus outlines from map layers
+        // Add focus styles
         if (!document.getElementById("leaflet-styles")) {
           const style = document.createElement("style");
           style.id = "leaflet-styles";
@@ -287,12 +262,13 @@ export default function LeafletMap({
     updateMap();
   }, [
     isMapInitialized,
+    geoJsonData,
     getRegionStyle,
     correctRegions,
     onRegionClick,
     highlightedRegion,
     L,
-    language,
+    config,
     getRegionName,
   ]);
 
