@@ -85,6 +85,7 @@
 }
 
 .description {
+  display: block;
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0;

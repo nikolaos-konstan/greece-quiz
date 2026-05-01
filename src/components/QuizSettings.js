@@ -41,9 +41,9 @@ const QuizSettings = ({
                 <span className={styles.radioText}>
                   {config.displayName[selectedLanguage]}
                 </span>
-                <p className={styles.description}>
+                <span className={styles.description}>
                   {config.description[selectedLanguage]}
-                </p>
+                </span>
               </label>
             ))}
           </div>
