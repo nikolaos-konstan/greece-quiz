@@ -2,7 +2,7 @@
 .mapContainer {
   width: 100%;
   height: 600px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -34,8 +34,8 @@
 .zoomButton {
   width: 30px;
   height: 30px;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -43,18 +43,19 @@
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  color: var(--foreground);
+  box-shadow: 0 1px 5px var(--shadow-control);
   transition: background-color 0.2s ease;
 }
 
 .zoomButton:hover {
-  background-color: #f4f4f4;
+  background-color: var(--surface-hover);
 }
 
 .resetButton {
   font-size: 16px;
   margin-top: 5px;
-  background-color: #f8f8f8;
+  background-color: var(--surface-primary);
 }
 
 /* Ensure tooltips and map interactions work properly */
@@ -62,43 +63,18 @@
   z-index: 650;
 }
 
-/* Local class combined with global selectors to ensure CSS modules compatibility */
-.map :global(.leaflet-interactive) {
-  outline: none !important;
+/* Focus styles for keyboard accessibility */
+.map :global(.leaflet-interactive:focus-visible) {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
 }
 
-.map :global(.leaflet-container) {
-  outline: none !important;
+.map :global(.leaflet-container:focus-visible) {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
-.map :global(.leaflet-container:focus),
-.map :global(.leaflet-container *:focus) {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* Hide the default Leaflet zoom controls (redundant code just to be sure) */
+/* Hide the default Leaflet zoom controls */
 .map :global(.leaflet-control-zoom) {
   display: none !important;
-}
-
-/* Dark mode support for controls */
-@media (prefers-color-scheme: dark) {
-  .zoomButton {
-    background-color: #333;
-    color: #fff;
-    border-color: #555;
-  }
-
-  .zoomButton:hover {
-    background-color: #444;
-  }
-
-  .resetButton {
-    background-color: #2a2a2a;
-  }
-
-  .resetButton:hover {
-    background-color: #3a3a3a;
-  }
 }

@@ -6,6 +6,7 @@ import {
   DEFAULT_QUIZ_TYPE,
   DEFAULT_LANGUAGE,
 } from "../config/quizConfig";
+import { t } from "../config/translations";
 import { useQuizData } from "../hooks/useQuizData";
 import { useQuizLogic } from "../hooks/useQuizLogic";
 import QuizSettings from "./QuizSettings";
@@ -19,12 +20,12 @@ const QuizController = () => {
   const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
   const [quizStarted, setQuizStarted] = useState(false);
 
-  // Get current quiz configuration
-  const currentConfig = QUIZ_CONFIGS[quizType];
+  // Get current quiz configuration (may be undefined for invalid quizType)
+  const currentConfig = QUIZ_CONFIGS[quizType] ?? null;
 
-  // Data loading hook
+  // Data loading hook — passes null when config is invalid or quiz not started
   const { regionsData, geoJsonData, loading, error, hasData } = useQuizData(
-    quizStarted ? currentConfig : null
+    quizStarted && currentConfig ? currentConfig : null
   );
 
   // Game logic hook
@@ -50,7 +51,7 @@ const QuizController = () => {
   const handleQuizTypeChange = (newQuizType) => {
     setQuizType(newQuizType);
     if (quizStarted) {
-      setQuizStarted(false); // Return to settings if quiz was active
+      setQuizStarted(false);
     }
   };
 
@@ -58,7 +59,7 @@ const QuizController = () => {
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage);
     if (quizStarted) {
-      setQuizStarted(false); // Return to settings if quiz was active
+      setQuizStarted(false);
     }
   };
 
@@ -76,6 +77,21 @@ const QuizController = () => {
   const handleResetQuiz = () => {
     resetQuiz();
   };
+
+  // Guard against invalid quiz type (after all hooks)
+  if (!currentConfig) {
+    return (
+      <div className={styles.errorContainer}>
+        <h2 className={styles.errorTitle}>{t(language, "invalidQuizType")}</h2>
+        <button
+          className={styles.backButton}
+          onClick={() => setQuizType(DEFAULT_QUIZ_TYPE)}
+        >
+          {t(language, "reset")}
+        </button>
+      </div>
+    );
+  }
 
   // Show settings screen
   if (!quizStarted) {
@@ -95,9 +111,7 @@ const QuizController = () => {
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.loadingText}>
-          {language === "en" ? "Loading quiz data..." : "Φόρτωση δεδομένων..."}
-        </div>
+        <div className={styles.loadingText}>{t(language, "loadingData")}</div>
       </div>
     );
   }
@@ -106,16 +120,17 @@ const QuizController = () => {
   if (error) {
     return (
       <div className={styles.errorContainer}>
-        <h2 className={styles.errorTitle}>
-          {language === "en" ? "Error Loading Quiz" : "Σφάλμα Φόρτωσης"}
-        </h2>
+        <h2 className={styles.errorTitle}>{t(language, "errorLoading")}</h2>
         <p className={styles.errorMessage}>{error}</p>
         <button className={styles.backButton} onClick={handleBackToSettings}>
-          {language === "en" ? "Back to Settings" : "Επιστροφή στις Ρυθμίσεις"}
+          {t(language, "backToSettings")}
         </button>
       </div>
     );
   }
+
+  const identified = totalRegions - remainingRegions - skippedRegions;
+  const remaining = remainingRegions + skippedRegions;
 
   // Show quiz interface
   return (
@@ -123,7 +138,7 @@ const QuizController = () => {
       {/* Header Controls */}
       <div className={styles.header}>
         <button className={styles.backButton} onClick={handleBackToSettings}>
-          ← {language === "en" ? "Settings" : "Ρυθμίσεις"}
+          &larr; {t(language, "settings")}
         </button>
 
         <h1 className={styles.quizTitle}>
@@ -131,11 +146,11 @@ const QuizController = () => {
         </h1>
 
         <div className={styles.scoreBoard}>
-          {language === "en" ? "Errors" : "Λάθη"}: {errors}
+          {t(language, "errors")}: {errors}
           {skips > 0 && (
             <span className={styles.skipCount}>
-              {" • "}
-              {language === "en" ? "Skips" : "Παραλείψεις"}: {skips}
+              {" \u2022 "}
+              {t(language, "skips")}: {skips}
             </span>
           )}
         </div>
@@ -143,23 +158,11 @@ const QuizController = () => {
 
       {/* Quiz Progress */}
       <div className={styles.progressInfo}>
-        {language === "en"
-          ? `${
-              totalRegions - remainingRegions - skippedRegions
-            } identified, ${skippedRegions} skipped, ${
-              remainingRegions + skippedRegions
-            } remaining`
-          : `${
-              totalRegions - remainingRegions - skippedRegions
-            } αναγνωρίστηκαν, ${skippedRegions} παραλείφθηκαν, ${
-              remainingRegions + skippedRegions
-            } απομένουν`}
+        {t(language, "progress", identified, skippedRegions, remaining)}
         {isSkippedPhase && (
           <span className={styles.phaseIndicator}>
-            {" • "}
-            {language === "en"
-              ? "Reviewing skipped regions"
-              : "Επανεξέταση παραλειφθέντων περιοχών"}
+            {" \u2022 "}
+            {t(language, "reviewingSkipped")}
           </span>
         )}
       </div>
@@ -167,27 +170,21 @@ const QuizController = () => {
       {/* Game Complete Screen */}
       {gameComplete ? (
         <div className={styles.gameComplete}>
-          <h2>
-            {language === "en" ? "Quiz Complete!" : "Το Κουίζ Ολοκληρώθηκε!"}
-          </h2>
+          <h2>{t(language, "quizComplete")}</h2>
+          <p>{t(language, "identifiedAll", totalRegions, errors)}</p>
           <p>
-            {language === "en"
-              ? `You identified all ${totalRegions} regions with ${errors} errors.`
-              : `Αναγνωρίσατε και τις ${totalRegions} περιοχές με ${errors} λάθη.`}
-          </p>
-          <p>
-            {language === "en" ? "Your rank: " : "Η κατάταξή σας: "}
+            {t(language, "yourRank")}
             <strong>{getUserRank()}</strong>
           </p>
           <div className={styles.gameCompleteButtons}>
             <button className={styles.resetButton} onClick={handleResetQuiz}>
-              {language === "en" ? "Play Again" : "Παίξτε Ξανά"}
+              {t(language, "playAgain")}
             </button>
             <button
               className={styles.settingsButton}
               onClick={handleBackToSettings}
             >
-              {language === "en" ? "Change Quiz Type" : "Αλλαγή Τύπου Κουίζ"}
+              {t(language, "changeQuizType")}
             </button>
           </div>
         </div>
@@ -221,12 +218,8 @@ const QuizController = () => {
           }`}
         >
           {isCorrect
-            ? language === "en"
-              ? "Correct!"
-              : "Σωστά!"
-            : language === "en"
-            ? `Incorrect! Try again to find ${currentQuestion}`
-            : `Λάθος! Προσπαθήστε ξανά να βρείτε ${currentQuestion}`}
+            ? t(language, "correct")
+            : t(language, "incorrect", currentQuestion)}
         </div>
       )}
 

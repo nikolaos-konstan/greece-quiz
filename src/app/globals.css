@@ -1,12 +1,95 @@
+/* Standard breakpoints: 480px (small), 600px (mobile), 768px (tablet) */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Surfaces */
+  --surface-primary: #f8f9fa;
+  --surface-secondary: #f4f4f4;
+  --surface-hover: #e9ecef;
+  --surface-elevated: #ffffff;
+
+  /* Borders */
+  --border-primary: #ddd;
+  --border-secondary: #e0e0e0;
+  --border-hover: #bbb;
+
+  /* Accent */
+  --accent-primary: #4a90e2;
+  --accent-primary-hover: #357abd;
+
+  /* Text */
+  --text-secondary: #666;
+  --text-muted: #6c757d;
+
+  /* Feedback */
+  --color-success: #74c476;
+  --color-success-bg: rgba(116, 196, 118, 0.95);
+  --color-success-text: #2c7a2e;
+  --color-error: #fb6a4a;
+  --color-error-bg: rgba(251, 106, 74, 0.95);
+  --color-error-text: #9c2b2b;
+  --color-error-heading: #d32f2f;
+  --color-warning: #ffc107;
+  --color-warning-text: #856404;
+
+  /* Buttons */
+  --btn-secondary-bg: #6c757d;
+  --btn-secondary-hover: #5a6268;
+  --btn-disabled-bg: #ccc;
+
+  /* Map */
+  --map-region-default: #f2f2f2;
+  --map-region-correct: #74c476;
+  --map-region-incorrect: #fb6a4a;
+  --map-border: #333;
+
+  /* Shadows */
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-strong: rgba(0, 0, 0, 0.15);
+  --shadow-control: rgba(0, 0, 0, 0.2);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --surface-primary: #2a2a2a;
+    --surface-secondary: #333;
+    --surface-hover: #444;
+    --surface-elevated: #333;
+
+    --border-primary: #444;
+    --border-secondary: #555;
+    --border-hover: #666;
+
+    --text-secondary: #aaa;
+    --text-muted: #aaa;
+
+    --color-success: #4caf50;
+    --color-success-bg: rgba(76, 175, 80, 0.9);
+    --color-success-text: #a5d6a7;
+    --color-error: #f44336;
+    --color-error-bg: rgba(244, 67, 54, 0.9);
+    --color-error-text: #ef9a9a;
+    --color-error-heading: #f44336;
+    --color-warning: #f39c12;
+    --color-warning-text: #2c1810;
+
+    --btn-secondary-bg: #495057;
+    --btn-secondary-hover: #3d4247;
+    --btn-disabled-bg: #555;
+
+    --map-region-default: #3a3a3a;
+    --map-region-correct: #4caf50;
+    --map-region-incorrect: #f44336;
+    --map-border: #888;
+
+    --shadow-color: rgba(255, 255, 255, 0.1);
+    --shadow-strong: rgba(255, 255, 255, 0.1);
+    --shadow-control: rgba(0, 0, 0, 0.3);
   }
 }
 

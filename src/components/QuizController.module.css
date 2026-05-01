@@ -18,8 +18,8 @@
 
 .backButton {
   padding: 8px 15px;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
+  background-color: var(--surface-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -29,8 +29,8 @@
 }
 
 .backButton:hover {
-  background-color: #e9ecef;
-  border-color: #bbb;
+  background-color: var(--surface-hover);
+  border-color: var(--border-hover);
 }
 
 .quizTitle {
@@ -54,7 +54,7 @@
 
 .skipCount {
   font-size: 16px;
-  color: #6c757d;
+  color: var(--text-muted);
 }
 
 /* Progress Information */
@@ -62,13 +62,13 @@
   text-align: center;
   margin-bottom: 20px;
   font-size: 16px;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   line-height: 1.4;
 }
 
 .phaseIndicator {
-  color: #ffc107;
+  color: var(--color-warning);
   font-weight: 600;
 }
 
@@ -94,13 +94,13 @@
 }
 
 .errorTitle {
-  color: #d32f2f;
+  color: var(--color-error-heading);
   margin-bottom: 15px;
   font-size: 24px;
 }
 
 .errorMessage {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 25px;
   font-size: 16px;
   line-height: 1.5;
@@ -111,13 +111,13 @@
   text-align: center;
   margin: 20px 0 30px;
   padding: 25px;
-  background-color: #f8f9fa;
+  background-color: var(--surface-primary);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .gameComplete h2 {
-  color: #333;
+  color: var(--foreground);
   margin-bottom: 15px;
   font-size: 28px;
 }
@@ -125,7 +125,7 @@
 .gameComplete p {
   margin-bottom: 12px;
   font-size: 18px;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 .gameCompleteButtons {
@@ -138,7 +138,7 @@
 
 .resetButton {
   padding: 12px 24px;
-  background-color: #4a90e2;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -149,12 +149,12 @@
 }
 
 .resetButton:hover {
-  background-color: #357abd;
+  background-color: var(--accent-primary-hover);
 }
 
 .settingsButton {
   padding: 12px 24px;
-  background-color: #6c757d;
+  background-color: var(--btn-secondary-bg);
   color: white;
   border: none;
   border-radius: 8px;
@@ -165,7 +165,7 @@
 }
 
 .settingsButton:hover {
-  background-color: #5a6268;
+  background-color: var(--btn-secondary-hover);
 }
 
 /* Feedback System */
@@ -183,84 +183,25 @@
   font-size: 16px;
   transition: all 0.3s ease;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px var(--shadow-strong);
 }
 
 .correct {
-  background-color: rgba(116, 196, 118, 0.95);
-  color: #2c7a2e;
-  border: 1px solid #74c476;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success);
 }
 
 .incorrect {
-  background-color: rgba(251, 106, 74, 0.95);
-  color: #9c2b2b;
-  border: 1px solid #fb6a4a;
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error);
 }
 
 .feedbackPlaceholder {
   height: 50px;
   margin-top: 15px;
   visibility: hidden;
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .gameComplete {
-    background-color: #2a2a2a;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-  }
-
-  .gameComplete h2 {
-    color: #f0f0f0;
-  }
-
-  .gameComplete p {
-    color: #d0d0d0;
-  }
-
-  .progressInfo {
-    color: #aaa;
-  }
-
-  .skipCount {
-    color: #aaa;
-  }
-
-  .phaseIndicator {
-    color: #f39c12;
-  }
-
-  .errorTitle {
-    color: #f44336;
-  }
-
-  .errorMessage {
-    color: #ccc;
-  }
-
-  .backButton {
-    background-color: #333;
-    color: #f0f0f0;
-    border-color: #555;
-  }
-
-  .backButton:hover {
-    background-color: #444;
-    border-color: #666;
-  }
-
-  .correct {
-    background-color: rgba(76, 175, 80, 0.9);
-    color: #a5d6a7;
-    border-color: #4caf50;
-  }
-
-  .incorrect {
-    background-color: rgba(244, 67, 54, 0.9);
-    color: #ef9a9a;
-    border-color: #f44336;
-  }
 }
 
 /* Responsive Design */

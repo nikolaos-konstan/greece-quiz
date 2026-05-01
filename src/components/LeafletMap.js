@@ -1,6 +1,7 @@
 // src/components/LeafletMap.js
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
+import { MAP_DEFAULTS } from "../config/quizConfig";
 import styles from "./LeafletMap.module.css";
 
 export default function LeafletMap({
@@ -15,6 +16,7 @@ export default function LeafletMap({
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const geojsonLayerRef = useRef(null);
+  const zoomControlRef = useRef(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
   const [L, setL] = useState(null);
 
@@ -47,10 +49,10 @@ export default function LeafletMap({
             boxZoom: true,
             keyboard: true,
             attributionControl: false,
-            minZoom: 6,
-            maxZoom: 10,
+            minZoom: MAP_DEFAULTS.MIN_ZOOM,
+            maxZoom: MAP_DEFAULTS.MAX_ZOOM,
           })
-          .setView([38.2, 24], 6);
+          .setView(MAP_DEFAULTS.CENTER, MAP_DEFAULTS.ZOOM);
 
         mapInstanceRef.current = mapInstance;
         setIsMapInitialized(true);
@@ -67,6 +69,7 @@ export default function LeafletMap({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         geojsonLayerRef.current = null;
+        zoomControlRef.current = null;
       }
     };
   }, []);
@@ -82,6 +85,14 @@ export default function LeafletMap({
     [language, config]
   );
 
+  // Read a CSS custom property value from :root
+  const getCSSVar = useCallback((name) => {
+    if (typeof window === "undefined") return "";
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+  }, []);
+
   // Style function for regions
   const getRegionStyle = useCallback(
     (feature) => {
@@ -91,36 +102,34 @@ export default function LeafletMap({
       const isCurrentCorrect =
         isHighlighted && highlightedRegion === correctRegion;
 
+      const baseStyle = {
+        weight: 1.5,
+        opacity: 1,
+        color: getCSSVar("--map-border") || "#333",
+        dashArray: "",
+        fillOpacity: 0.7,
+      };
+
       if (isCorrectlyIdentified) {
         return {
-          fillColor: "#74c476",
-          weight: 1.5,
-          opacity: 1,
-          color: "#333",
-          dashArray: "",
-          fillOpacity: 0.7,
+          ...baseStyle,
+          fillColor: getCSSVar("--map-region-correct") || "#74c476",
         };
       } else if (isHighlighted) {
         return {
-          fillColor: isCurrentCorrect ? "#74c476" : "#fb6a4a",
-          weight: 1.5,
-          opacity: 1,
-          color: "#333",
-          dashArray: "",
-          fillOpacity: 0.7,
+          ...baseStyle,
+          fillColor: isCurrentCorrect
+            ? getCSSVar("--map-region-correct") || "#74c476"
+            : getCSSVar("--map-region-incorrect") || "#fb6a4a",
         };
       } else {
         return {
-          fillColor: "#f2f2f2",
-          weight: 1.5,
-          opacity: 1,
-          color: "#333",
-          dashArray: "",
-          fillOpacity: 0.7,
+          ...baseStyle,
+          fillColor: getCSSVar("--map-region-default") || "#f2f2f2",
         };
       }
     },
-    [highlightedRegion, correctRegion, correctRegions, getRegionName]
+    [highlightedRegion, correctRegion, correctRegions, getRegionName, getCSSVar]
   );
 
   // Update map when data or settings change
@@ -176,7 +185,7 @@ export default function LeafletMap({
         geojsonLayerRef.current = layer;
 
         // Add custom zoom controls
-        if (!document.getElementById("custom-zoom-controls")) {
+        if (!zoomControlRef.current) {
           const zoomControlsContainer = L.control({ position: "topright" });
 
           zoomControlsContainer.onAdd = function () {
@@ -184,7 +193,6 @@ export default function LeafletMap({
               "div",
               styles.customZoomControls
             );
-            container.id = "custom-zoom-controls";
 
             const zoomInButton = L.DomUtil.create(
               "button",
@@ -193,6 +201,7 @@ export default function LeafletMap({
             );
             zoomInButton.innerHTML = "+";
             zoomInButton.title = "Zoom in";
+            zoomInButton.setAttribute("aria-label", "Zoom in");
 
             const zoomOutButton = L.DomUtil.create(
               "button",
@@ -201,6 +210,7 @@ export default function LeafletMap({
             );
             zoomOutButton.innerHTML = "−";
             zoomOutButton.title = "Zoom out";
+            zoomOutButton.setAttribute("aria-label", "Zoom out");
 
             const resetZoomButton = L.DomUtil.create(
               "button",
@@ -209,6 +219,10 @@ export default function LeafletMap({
             );
             resetZoomButton.innerHTML = "⟲";
             resetZoomButton.title = "Reset zoom";
+            resetZoomButton.setAttribute(
+              "aria-label",
+              "Reset zoom to default view"
+            );
 
             L.DomEvent.on(zoomInButton, "click", function () {
               if (
@@ -229,30 +243,17 @@ export default function LeafletMap({
             });
 
             L.DomEvent.on(resetZoomButton, "click", function () {
-              mapInstanceRef.current.setView([38.2, 24], 6);
+              mapInstanceRef.current.setView(
+                MAP_DEFAULTS.CENTER,
+                MAP_DEFAULTS.ZOOM
+              );
             });
 
             return container;
           };
 
+          zoomControlRef.current = zoomControlsContainer;
           zoomControlsContainer.addTo(mapInstanceRef.current);
-        }
-
-        // Add focus styles
-        if (!document.getElementById("leaflet-styles")) {
-          const style = document.createElement("style");
-          style.id = "leaflet-styles";
-          style.innerHTML = `
-            .leaflet-interactive {
-              outline: none !important;
-            }
-            .leaflet-container:focus,
-            .leaflet-container *:focus {
-              outline: none !important;
-              box-shadow: none !important;
-            }
-          `;
-          document.head.appendChild(style);
         }
       } catch (error) {
         console.error("Error updating GeoJSON layer:", error);

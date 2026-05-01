@@ -1,6 +1,8 @@
 // src/hooks/useQuizLogic.js
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getRegionNames } from "../utils/dataHelpers";
+import { TIMING, RANK_THRESHOLDS } from "../config/quizConfig";
+import { t } from "../config/translations";
 
 export const useQuizLogic = (regionsData, language) => {
   const [remainingRegions, setRemainingRegions] = useState([]);
@@ -13,25 +15,14 @@ export const useQuizLogic = (regionsData, language) => {
   const [skips, setSkips] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
   const [isSkippedPhase, setIsSkippedPhase] = useState(false);
+  const timerRef = useRef(null);
 
-  // Initialize or reset quiz
-  const initializeQuiz = useCallback(() => {
-    if (!regionsData.length) return;
-
-    const regionNames = getRegionNames(regionsData, language);
-    setRemainingRegions([...regionNames]);
-    setSkippedRegions([]);
-    setCorrectRegions([]);
-    setErrors(0);
-    setSkips(0);
-    setGameComplete(false);
-    setIsSkippedPhase(false);
-    setHighlightedRegion(null);
-    setIsCorrect(null);
-
-    // Generate first question
-    generateQuestion(regionNames, []);
-  }, [regionsData, language]);
+  // Clear any pending timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   // Generate a new random question
   const generateQuestion = useCallback(
@@ -65,6 +56,25 @@ export const useQuizLogic = (regionsData, language) => {
     []
   );
 
+  // Initialize or reset quiz
+  const initializeQuiz = useCallback(() => {
+    if (!regionsData.length) return;
+
+    const regionNames = getRegionNames(regionsData, language);
+    setRemainingRegions([...regionNames]);
+    setSkippedRegions([]);
+    setCorrectRegions([]);
+    setErrors(0);
+    setSkips(0);
+    setGameComplete(false);
+    setIsSkippedPhase(false);
+    setHighlightedRegion(null);
+    setIsCorrect(null);
+
+    // Generate first question
+    generateQuestion(regionNames, []);
+  }, [regionsData, language, generateQuestion]);
+
   // Handle skipping the current question
   const handleSkipQuestion = useCallback(() => {
     if (!currentQuestion) return;
@@ -79,18 +89,20 @@ export const useQuizLogic = (regionsData, language) => {
       setSkips((prevSkips) => prevSkips + 1);
 
       // Generate next question
-      setTimeout(() => {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
         generateQuestion(updatedRemainingRegions, skippedRegions);
-      }, 300);
+      }, TIMING.SKIP_DELAY);
     } else {
       // In skipped phase - just move to next skipped region
       const currentSkippedRegions = skippedRegions.filter(
         (region) => region !== currentQuestion
       );
 
-      setTimeout(() => {
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
         generateQuestion([], currentSkippedRegions);
-      }, 300);
+      }, TIMING.SKIP_DELAY);
     }
   }, [
     currentQuestion,
@@ -122,19 +134,21 @@ export const useQuizLogic = (regionsData, language) => {
           setCurrentQuestion(null);
         } else {
           // Generate new question after brief delay
-          setTimeout(() => {
+          clearTimeout(timerRef.current);
+          timerRef.current = setTimeout(() => {
             generateQuestion(updatedRemainingRegions);
-          }, 1000);
+          }, TIMING.CORRECT_DELAY);
         }
       } else {
         // Incorrect answer - increment error count
         setErrors((prevErrors) => prevErrors + 1);
 
         // Clear feedback after delay, but keep asking for same region
-        setTimeout(() => {
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
           setHighlightedRegion(null);
           setIsCorrect(null);
-        }, 1500);
+        }, TIMING.INCORRECT_FEEDBACK);
       }
     },
     [currentQuestion, remainingRegions, generateQuestion]
@@ -147,30 +161,13 @@ export const useQuizLogic = (regionsData, language) => {
     const totalRegions = regionsData.length;
     const errorRate = errors / totalRegions;
 
-    const ranks = {
-      en: {
-        perfect: "Geography Master",
-        excellent: "Geography Expert",
-        good: "Geography Enthusiast",
-        fair: "Geography Student",
-        beginner: "Geography Novice",
-      },
-      el: {
-        perfect: "Γεωγραφικός Δάσκαλος",
-        excellent: "Ειδικός Γεωγραφίας",
-        good: "Λάτρης Γεωγραφίας",
-        fair: "Μαθητής Γεωγραφίας",
-        beginner: "Αρχάριος Γεωγραφίας",
-      },
-    };
-
-    const langRanks = ranks[language] || ranks.en;
-
-    if (errorRate === 0) return langRanks.perfect;
-    if (errorRate < 0.1) return langRanks.excellent;
-    if (errorRate < 0.25) return langRanks.good;
-    if (errorRate < 0.5) return langRanks.fair;
-    return langRanks.beginner;
+    if (errorRate === RANK_THRESHOLDS.PERFECT)
+      return t(language, "rankPerfect");
+    if (errorRate < RANK_THRESHOLDS.EXCELLENT)
+      return t(language, "rankExcellent");
+    if (errorRate < RANK_THRESHOLDS.GOOD) return t(language, "rankGood");
+    if (errorRate < RANK_THRESHOLDS.FAIR) return t(language, "rankFair");
+    return t(language, "rankBeginner");
   }, [regionsData.length, errors, language]);
 
   // Initialize quiz when data or language changes

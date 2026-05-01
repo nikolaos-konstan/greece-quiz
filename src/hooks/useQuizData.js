@@ -1,6 +1,7 @@
 // src/hooks/useQuizData.js
 import { useState, useEffect } from "react";
 import { transformRegionData, validateRegionData } from "../utils/dataHelpers";
+import { FETCH_TIMEOUT_MS } from "../config/quizConfig";
 
 export const useQuizData = (quizConfig) => {
   const [regionsData, setRegionsData] = useState([]);
@@ -11,12 +12,18 @@ export const useQuizData = (quizConfig) => {
   useEffect(() => {
     if (!quizConfig) return;
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
     const loadQuizData = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(quizConfig.dataPath);
+        const response = await fetch(quizConfig.dataPath, {
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           throw new Error(`Failed to load quiz data: ${response.status}`);
@@ -42,8 +49,14 @@ export const useQuizData = (quizConfig) => {
         setGeoJsonData(data);
         setRegionsData(transformedData);
       } catch (err) {
-        console.error("Error loading quiz data:", err);
-        setError(err.message);
+        if (err.name === "AbortError") {
+          setError(
+            "Data loading timed out. Please check your connection and try again."
+          );
+        } else {
+          console.error("Error loading quiz data:", err);
+          setError(err.message);
+        }
         setRegionsData([]);
         setGeoJsonData(null);
       } finally {
@@ -52,6 +65,11 @@ export const useQuizData = (quizConfig) => {
     };
 
     loadQuizData();
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [quizConfig]);
 
   return {

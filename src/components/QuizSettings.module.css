@@ -14,10 +14,10 @@
 
 .settingsCard {
   background-color: var(--background);
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .cardTitle {
@@ -29,6 +29,8 @@
 .settingGroup {
   margin-bottom: 25px;
   text-align: left;
+  border: none;
+  padding: 0;
 }
 
 .label {
@@ -49,14 +51,14 @@
   display: flex;
   flex-direction: column;
   padding: 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-secondary);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .radioLabel:hover {
-  border-color: #4a90e2;
+  border-color: var(--accent-primary);
   background-color: rgba(74, 144, 226, 0.05);
 }
 
@@ -66,12 +68,12 @@
 }
 
 .radioInput:checked + .radioText {
-  color: #4a90e2;
+  color: var(--accent-primary);
   font-weight: bold;
 }
 
 .radioLabel:has(.radioInput:checked) {
-  border-color: #4a90e2;
+  border-color: var(--accent-primary);
   background-color: rgba(74, 144, 226, 0.1);
 }
 
@@ -84,14 +86,14 @@
 
 .description {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
 }
 
 .languageToggle {
   display: flex;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -112,14 +114,14 @@
 }
 
 .languageButton.active {
-  background-color: #4a90e2;
+  background-color: var(--accent-primary);
   color: white;
 }
 
 .startButton {
   width: 100%;
   padding: 15px 30px;
-  background-color: #4a90e2;
+  background-color: var(--accent-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -131,44 +133,21 @@
 }
 
 .startButton:hover:not(:disabled) {
-  background-color: #357abd;
+  background-color: var(--accent-primary-hover);
 }
 
 .startButton:disabled {
-  background-color: #ccc;
+  background-color: var(--btn-disabled-bg);
   cursor: not-allowed;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .settingsCard {
-    border-color: #333;
-    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
-  }
-
-  .radioLabel {
-    border-color: #444;
-  }
-
-  .radioLabel:hover {
-    border-color: #4a90e2;
-    background-color: rgba(74, 144, 226, 0.1);
-  }
-
-  .description {
-    color: #aaa;
-  }
-
-  .languageToggle {
-    border-color: #444;
-  }
-
-  .languageButton:hover {
-    background-color: rgba(74, 144, 226, 0.2);
+    padding: 25px;
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
   .settingsContainer {
     padding: 15px;

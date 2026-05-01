@@ -1,5 +1,6 @@
 // src/components/QuizSettings.js
 import { QUIZ_CONFIGS } from "../config/quizConfig";
+import { t } from "../config/translations";
 import styles from "./QuizSettings.module.css";
 
 const QuizSettings = ({
@@ -14,22 +15,18 @@ const QuizSettings = ({
 
   return (
     <div className={styles.settingsContainer}>
-      <h1 className={styles.title}>
-        {selectedLanguage === "en"
-          ? "Greece Geography Quiz"
-          : "Κουίζ Γεωγραφίας Ελλάδας"}
-      </h1>
+      <h1 className={styles.title}>{t(selectedLanguage, "appTitle")}</h1>
 
       <div className={styles.settingsCard}>
         <h2 className={styles.cardTitle}>
-          {selectedLanguage === "en" ? "Quiz Settings" : "Ρυθμίσεις Κουίζ"}
+          {t(selectedLanguage, "quizSettings")}
         </h2>
 
         {/* Quiz Type Selection */}
-        <div className={styles.settingGroup}>
-          <label className={styles.label}>
-            {selectedLanguage === "en" ? "Quiz Type:" : "Τύπος Κουίζ:"}
-          </label>
+        <fieldset className={styles.settingGroup}>
+          <legend className={styles.label}>
+            {t(selectedLanguage, "quizType")}
+          </legend>
           <div className={styles.radioGroup}>
             {quizOptions.map((config) => (
               <label key={config.id} className={styles.radioLabel}>
@@ -50,13 +47,13 @@ const QuizSettings = ({
               </label>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         {/* Language Selection */}
-        <div className={styles.settingGroup}>
-          <label className={styles.label}>
-            {selectedLanguage === "en" ? "Language:" : "Γλώσσα:"}
-          </label>
+        <fieldset className={styles.settingGroup}>
+          <legend className={styles.label}>
+            {t(selectedLanguage, "language")}
+          </legend>
           <div className={styles.languageToggle}>
             <button
               className={`${styles.languageButton} ${
@@ -75,7 +72,7 @@ const QuizSettings = ({
               Ελληνικά
             </button>
           </div>
-        </div>
+        </fieldset>
 
         {/* Start Quiz Button */}
         <button
@@ -84,12 +81,8 @@ const QuizSettings = ({
           disabled={isLoading}
         >
           {isLoading
-            ? selectedLanguage === "en"
-              ? "Loading..."
-              : "Φόρτωση..."
-            : selectedLanguage === "en"
-            ? "Start Quiz"
-            : "Έναρξη Κουίζ"}
+            ? t(selectedLanguage, "loading")
+            : t(selectedLanguage, "startQuiz")}
         </button>
       </div>
     </div>

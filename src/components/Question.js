@@ -1,4 +1,5 @@
 // src/components/Question.js
+import { t } from "../config/translations";
 import styles from "./Question.module.css";
 
 const Question = ({
@@ -10,19 +11,13 @@ const Question = ({
   return (
     <div className={styles.questionContainer}>
       <div className={styles.questionHeader}>
-        <h2>
-          {language === "en"
-            ? "Find this region on the map:"
-            : "Βρείτε αυτήν την περιοχή στον χάρτη:"}
-        </h2>
+        <h2>{t(language, "findRegion")}</h2>
         <button
           className={styles.skipButton}
           onClick={onSkip}
-          title={
-            language === "en" ? "Skip this question" : "Παράλειψη ερώτησης"
-          }
+          title={t(language, "skipQuestion")}
         >
-          {language === "en" ? "Next" : "Επόμενο"}
+          {t(language, "next")}
         </button>
       </div>
 
@@ -30,9 +25,7 @@ const Question = ({
         {regionName}
         {isSkippedPhase && (
           <span className={styles.skippedBadge}>
-            {language === "en"
-              ? "(Previously skipped)"
-              : "(Προηγουμένως παραλείφθηκε)"}
+            {t(language, "previouslySkipped")}
           </span>
         )}
       </p>

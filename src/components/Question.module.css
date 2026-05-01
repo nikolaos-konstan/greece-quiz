@@ -20,7 +20,7 @@
 
 .skipButton {
   padding: 8px 16px;
-  background-color: #6c757d;
+  background-color: var(--btn-secondary-bg);
   color: white;
   border: none;
   border-radius: 6px;
@@ -32,7 +32,7 @@
 }
 
 .skipButton:hover {
-  background-color: #5a6268;
+  background-color: var(--btn-secondary-hover);
   transform: translateY(-1px);
 }
 
@@ -55,27 +55,11 @@
 .skippedBadge {
   font-size: 14px;
   font-weight: normal;
-  background-color: #ffc107;
-  color: #856404;
+  background-color: var(--color-warning);
+  color: var(--color-warning-text);
   padding: 4px 8px;
   border-radius: 12px;
   white-space: nowrap;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .skipButton {
-    background-color: #495057;
-  }
-
-  .skipButton:hover {
-    background-color: #3d4247;
-  }
-
-  .skippedBadge {
-    background-color: #f39c12;
-    color: #2c1810;
-  }
 }
 
 /* Responsive design */
