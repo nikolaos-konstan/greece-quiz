@@ -16,6 +16,7 @@ const QuizSettings = ({
   return (
     <div className={styles.settingsContainer}>
       <h1 className={styles.title}>{t(selectedLanguage, "appTitle")}</h1>
+      <p className={styles.subtitle}>{t(selectedLanguage, "appSubtitle")}</p>
 
       <div className={styles.settingsCard}>
         <h2 className={styles.cardTitle}>

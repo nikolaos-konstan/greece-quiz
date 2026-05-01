@@ -156,6 +156,16 @@ const QuizController = () => {
         </div>
       </div>
 
+      {/* Progress Bar */}
+      <div className={styles.progressBar}>
+        <div
+          className={styles.progressFill}
+          style={{
+            width: `${totalRegions > 0 ? (identified / totalRegions) * 100 : 0}%`,
+          }}
+        />
+      </div>
+
       {/* Quiz Progress */}
       <div className={styles.progressInfo}>
         {t(language, "progress", identified, skippedRegions, remaining)}

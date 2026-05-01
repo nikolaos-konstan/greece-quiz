@@ -11,60 +11,84 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
   gap: 10px;
 }
 
 .backButton {
-  padding: 8px 15px;
-  background-color: var(--surface-primary);
+  padding: 7px 14px;
+  background-color: var(--surface-elevated);
   border: 1px solid var(--border-primary);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   transition: all 0.2s ease;
-  color: var(--foreground);
+  color: var(--text-secondary);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .backButton:hover {
   background-color: var(--surface-hover);
   border-color: var(--border-hover);
+  color: var(--foreground);
 }
 
 .quizTitle {
-  font-size: 24px;
+  font-size: 20px;
+  font-weight: 700;
   margin: 0;
   text-align: center;
   flex: 1;
   color: var(--foreground);
+  letter-spacing: -0.3px;
 }
 
 .scoreBoard {
-  text-align: right;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-elevated);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-primary);
+  white-space: nowrap;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 1px 4px var(--shadow-color);
 }
 
 .skipCount {
-  font-size: 16px;
   color: var(--text-muted);
+}
+
+/* Progress Bar */
+.progressBar {
+  height: 5px;
+  background-color: var(--surface-primary);
+  border-radius: 3px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--color-success));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  min-width: 3px;
 }
 
 /* Progress Information */
 .progressInfo {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 16px;
-  color: var(--text-secondary);
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
   font-weight: 500;
-  line-height: 1.4;
 }
 
 .phaseIndicator {
@@ -81,8 +105,8 @@
 }
 
 .loadingText {
-  font-size: 18px;
-  color: var(--foreground);
+  font-size: 16px;
+  color: var(--text-secondary);
 }
 
 /* Error State */
@@ -96,43 +120,48 @@
 .errorTitle {
   color: var(--color-error-heading);
   margin-bottom: 15px;
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .errorMessage {
   color: var(--text-secondary);
   margin-bottom: 25px;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
 /* Game Complete Section */
 .gameComplete {
   text-align: center;
-  margin: 20px 0 30px;
-  padding: 25px;
-  background-color: var(--surface-primary);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  margin: 20px 0 24px;
+  padding: 32px 28px;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-secondary);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px var(--shadow-color);
 }
 
 .gameComplete h2 {
   color: var(--foreground);
-  margin-bottom: 15px;
-  font-size: 28px;
+  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .gameComplete p {
-  margin-bottom: 12px;
-  font-size: 18px;
+  margin-bottom: 10px;
+  font-size: 16px;
   color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .gameCompleteButtons {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 24px;
   flex-wrap: wrap;
 }
 
@@ -141,31 +170,36 @@
   background-color: var(--accent-primary);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px var(--shadow-accent);
 }
 
 .resetButton:hover {
   background-color: var(--accent-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--shadow-accent);
 }
 
 .settingsButton {
   padding: 12px 24px;
-  background-color: var(--btn-secondary-bg);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  background-color: var(--surface-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .settingsButton:hover {
-  background-color: var(--btn-secondary-hover);
+  background-color: var(--surface-hover);
+  color: var(--foreground);
+  border-color: var(--border-hover);
 }
 
 /* Feedback System */
@@ -176,14 +210,14 @@
   width: 100%;
   max-width: 400px;
   margin-top: 15px;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
   text-align: center;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 15px;
   transition: all 0.3s ease;
   z-index: 1000;
-  box-shadow: 0 2px 8px var(--shadow-strong);
+  box-shadow: 0 4px 16px var(--shadow-strong);
 }
 
 .correct {
@@ -213,11 +247,11 @@
   .header {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
+    gap: 12px;
   }
 
   .quizTitle {
-    font-size: 20px;
+    font-size: 18px;
     order: -1;
   }
 
@@ -226,7 +260,7 @@
   }
 
   .scoreBoard {
-    text-align: center;
+    align-self: flex-end;
   }
 
   .gameCompleteButtons {
@@ -237,12 +271,12 @@
   .resetButton,
   .settingsButton {
     width: 100%;
-    max-width: 250px;
+    max-width: 260px;
   }
 
   .feedback {
     font-size: 14px;
-    padding: 10px;
+    padding: 10px 14px;
   }
 }
 
@@ -252,14 +286,14 @@
   }
 
   .gameComplete {
-    padding: 20px 15px;
+    padding: 24px 16px;
   }
 
   .gameComplete h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .gameComplete p {
-    font-size: 16px;
+    font-size: 15px;
   }
 }

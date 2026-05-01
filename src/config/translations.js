@@ -4,6 +4,7 @@ const translations = {
   en: {
     // App
     appTitle: "Greece Geography Quiz",
+    appSubtitle: "Test your knowledge of Greek geography",
 
     // Settings
     quizSettings: "Quiz Settings",
@@ -58,6 +59,7 @@ const translations = {
   },
   el: {
     appTitle: "Κουίζ Γεωγραφίας Ελλάδας",
+    appSubtitle: "Δοκιμάστε τις γνώσεις σας για τη γεωγραφία της Ελλάδας",
 
     quizSettings: "Ρυθμίσεις Κουίζ",
     quizType: "Τύπος Κουίζ:",
