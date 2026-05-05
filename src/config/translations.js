@@ -44,12 +44,18 @@ const translations = {
     playAgain: "Play Again",
     changeQuizType: "Change Quiz Type",
 
+    // Stats
+    score: "Score",
+    bestStreak: "Best Streak",
+
     // Ranks
-    rankPerfect: "Geography Master",
-    rankExcellent: "Geography Expert",
-    rankGood: "Geography Enthusiast",
-    rankFair: "Geography Student",
-    rankBeginner: "Geography Novice",
+    rankS: "Chosen of Poseidon",
+    rankA: "Alexandrian Cartographer",
+    rankB: "Argonaut",
+    rankC: "Athenian Scholar",
+    rankD: "Ionian Trader",
+    rankE: "Rural Wanderer",
+    rankF: "Lost Wayfarer",
 
     // Errors
     invalidQuizType: "Invalid quiz type",
@@ -93,11 +99,16 @@ const translations = {
     playAgain: "Παίξτε Ξανά",
     changeQuizType: "Αλλαγή Τύπου Κουίζ",
 
-    rankPerfect: "Γεωγραφικός Δάσκαλος",
-    rankExcellent: "Ειδικός Γεωγραφίας",
-    rankGood: "Λάτρης Γεωγραφίας",
-    rankFair: "Μαθητής Γεωγραφίας",
-    rankBeginner: "Αρχάριος Γεωγραφίας",
+    score: "Βαθμολογία",
+    bestStreak: "Καλύτερη Σειρά",
+
+    rankS: "Εκλεκτός του Ποσειδώνα",
+    rankA: "Αλεξανδρινός Χαρτογράφος",
+    rankB: "Αργοναύτης",
+    rankC: "Αθηναίος Λόγιος",
+    rankD: "Ιώνιος Έμπορος",
+    rankE: "Περιπλανώμενος",
+    rankF: "Χαμένος Οδοιπόρος",
 
     invalidQuizType: "Μη έγκυρος τύπος κουίζ",
     reset: "Επαναφορά",

@@ -1,7 +1,7 @@
 // src/hooks/useQuizLogic.js
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getRegionNames } from "../utils/dataHelpers";
-import { TIMING, RANK_THRESHOLDS } from "../config/quizConfig";
+import { TIMING, RANK_THRESHOLDS, SKIP_PENALTY } from "../config/quizConfig";
 import { t } from "../config/translations";
 
 export const useQuizLogic = (regionsData, language) => {
@@ -13,6 +13,8 @@ export const useQuizLogic = (regionsData, language) => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [errors, setErrors] = useState(0);
   const [skips, setSkips] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
   const [isSkippedPhase, setIsSkippedPhase] = useState(false);
   const timerRef = useRef(null);
@@ -66,6 +68,8 @@ export const useQuizLogic = (regionsData, language) => {
     setCorrectRegions([]);
     setErrors(0);
     setSkips(0);
+    setCurrentStreak(0);
+    setBestStreak(0);
     setGameComplete(false);
     setIsSkippedPhase(false);
     setHighlightedRegion(null);
@@ -119,6 +123,12 @@ export const useQuizLogic = (regionsData, language) => {
       setIsCorrect(correct);
 
       if (correct) {
+        setCurrentStreak((prev) => {
+          const next = prev + 1;
+          setBestStreak((best) => Math.max(best, next));
+          return next;
+        });
+
         // Add to correct regions list
         setCorrectRegions((prev) => [...prev, regionName]);
 
@@ -140,7 +150,7 @@ export const useQuizLogic = (regionsData, language) => {
           }, TIMING.CORRECT_DELAY);
         }
       } else {
-        // Incorrect answer - increment error count
+        setCurrentStreak(0);
         setErrors((prevErrors) => prevErrors + 1);
 
         // Clear feedback after delay, but keep asking for same region
@@ -154,21 +164,25 @@ export const useQuizLogic = (regionsData, language) => {
     [currentQuestion, remainingRegions, generateQuestion]
   );
 
-  // Calculate user rank based on performance
+  const getScore = useCallback(() => {
+    if (!regionsData.length) return 0;
+    return Math.max(
+      0,
+      Math.round(100 - ((errors + skips * SKIP_PENALTY) / regionsData.length) * 100)
+    );
+  }, [regionsData.length, errors, skips]);
+
   const getUserRank = useCallback(() => {
     if (!regionsData.length) return "";
-
-    const totalRegions = regionsData.length;
-    const errorRate = errors / totalRegions;
-
-    if (errorRate === RANK_THRESHOLDS.PERFECT)
-      return t(language, "rankPerfect");
-    if (errorRate < RANK_THRESHOLDS.EXCELLENT)
-      return t(language, "rankExcellent");
-    if (errorRate < RANK_THRESHOLDS.GOOD) return t(language, "rankGood");
-    if (errorRate < RANK_THRESHOLDS.FAIR) return t(language, "rankFair");
-    return t(language, "rankBeginner");
-  }, [regionsData.length, errors, language]);
+    const score = getScore();
+    if (score >= RANK_THRESHOLDS.S) return t(language, "rankS");
+    if (score >= RANK_THRESHOLDS.A) return t(language, "rankA");
+    if (score >= RANK_THRESHOLDS.B) return t(language, "rankB");
+    if (score >= RANK_THRESHOLDS.C) return t(language, "rankC");
+    if (score >= RANK_THRESHOLDS.D) return t(language, "rankD");
+    if (score >= RANK_THRESHOLDS.E) return t(language, "rankE");
+    return t(language, "rankF");
+  }, [getScore, regionsData.length, language]);
 
   // Initialize quiz when data or language changes
   useEffect(() => {
@@ -193,6 +207,8 @@ export const useQuizLogic = (regionsData, language) => {
     handleRegionClick,
     handleSkipQuestion,
     resetQuiz: initializeQuiz,
+    getScore,
     getUserRank,
+    bestStreak,
   };
 };

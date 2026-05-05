@@ -44,7 +44,9 @@ const QuizController = () => {
     handleRegionClick,
     handleSkipQuestion,
     resetQuiz,
+    getScore,
     getUserRank,
+    bestStreak,
   } = useQuizLogic(regionsData, language);
 
   // Handle quiz type change
@@ -181,11 +183,28 @@ const QuizController = () => {
       {gameComplete ? (
         <div className={styles.gameComplete}>
           <h2>{t(language, "quizComplete")}</h2>
-          <p>{t(language, "identifiedAll", totalRegions, errors)}</p>
-          <p>
-            {t(language, "yourRank")}
-            <strong>{getUserRank()}</strong>
-          </p>
+          <div className={styles.statsGrid}>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>{t(language, "score")}</span>
+              <span className={styles.statValue}>{getScore()}/100</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>{t(language, "bestStreak")}</span>
+              <span className={styles.statValue}>{bestStreak}</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>{t(language, "errors")}</span>
+              <span className={styles.statValue}>{errors}</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>{t(language, "skips")}</span>
+              <span className={styles.statValue}>{skips}</span>
+            </div>
+          </div>
+          <div className={styles.rankDisplay}>
+            <span className={styles.rankLabel}>{t(language, "yourRank")}</span>
+            <strong className={styles.rankValue}>{getUserRank()}</strong>
+          </div>
           <div className={styles.gameCompleteButtons}>
             <button className={styles.resetButton} onClick={handleResetQuiz}>
               {t(language, "playAgain")}

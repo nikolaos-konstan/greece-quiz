@@ -57,11 +57,15 @@ export const MAP_DEFAULTS = {
   MAX_ZOOM: 10,
 };
 
+export const SKIP_PENALTY = 0.5;
+
 export const RANK_THRESHOLDS = {
-  PERFECT: 0,
-  EXCELLENT: 0.1,
-  GOOD: 0.25,
-  FAIR: 0.5,
+  S: 100,
+  A: 88,
+  B: 72,
+  C: 55,
+  D: 38,
+  E: 20,
 };
 
 export const FETCH_TIMEOUT_MS = 15000;
