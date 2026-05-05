@@ -37,13 +37,14 @@
 }
 
 .quizTitle {
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 700;
   margin: 0;
   text-align: center;
   flex: 1;
   color: var(--foreground);
-  letter-spacing: -0.3px;
+  letter-spacing: 0.04em;
 }
 
 .scoreBoard {
@@ -67,7 +68,7 @@
 
 /* Progress Bar */
 .progressBar {
-  height: 5px;
+  height: 6px;
   background-color: var(--surface-primary);
   border-radius: 3px;
   margin-bottom: 10px;
@@ -76,10 +77,19 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary), var(--color-success));
+  background: linear-gradient(
+    90deg,
+    var(--accent-primary),
+    #4A9EF5,
+    var(--color-success),
+    #4A9EF5,
+    var(--accent-primary)
+  );
+  background-size: 300% auto;
   border-radius: 3px;
   transition: width 0.5s ease;
-  min-width: 3px;
+  min-width: 4px;
+  animation: progressShimmer 4s linear infinite;
 }
 
 /* Progress Information */
@@ -93,7 +103,7 @@
 
 .phaseIndicator {
   color: var(--color-warning);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Loading State */
@@ -118,6 +128,7 @@
 }
 
 .errorTitle {
+  font-family: var(--font-display);
   color: var(--color-error-heading);
   margin-bottom: 15px;
   font-size: 22px;
@@ -133,21 +144,35 @@
 
 /* Game Complete Section */
 .gameComplete {
+  position: relative;
   text-align: center;
   margin: 20px 0 24px;
-  padding: 32px 28px;
+  padding: 40px 32px;
   background-color: var(--surface-elevated);
   border: 1px solid var(--border-secondary);
+  border-top: 4px solid var(--accent-gold);
   border-radius: 16px;
-  box-shadow: 0 4px 16px var(--shadow-color);
+  box-shadow: 0 8px 32px var(--shadow-color), 0 2px 8px var(--shadow-gold);
+  overflow: hidden;
+  animation: gameCompleteReveal 0.4s ease-out;
+}
+
+.gameComplete::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top center, var(--accent-gold-light) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .gameComplete h2 {
-  color: var(--foreground);
-  margin-bottom: 12px;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-family: var(--font-display);
+  color: var(--accent-gold);
+  margin-bottom: 14px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  position: relative;
 }
 
 .gameComplete p {
@@ -155,33 +180,34 @@
   font-size: 16px;
   color: var(--text-secondary);
   line-height: 1.5;
+  position: relative;
 }
 
 .gameCompleteButtons {
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-top: 24px;
+  margin-top: 28px;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .resetButton {
-  padding: 12px 24px;
-  background-color: var(--accent-primary);
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
   color: white;
   border: none;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   box-shadow: 0 4px 14px var(--shadow-accent);
 }
 
 .resetButton:hover {
-  background-color: var(--accent-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--shadow-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px var(--shadow-accent);
 }
 
 .settingsButton {
@@ -208,16 +234,16 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin-top: 15px;
-  padding: 12px 16px;
+  padding: 13px 18px;
   border-radius: 10px;
   text-align: center;
   font-weight: 700;
   font-size: 15px;
-  transition: all 0.3s ease;
   z-index: 1000;
-  box-shadow: 0 4px 16px var(--shadow-strong);
+  box-shadow: 0 6px 24px var(--shadow-strong);
+  animation: feedbackSlideIn 0.25s ease-out;
 }
 
 .correct {
@@ -286,7 +312,7 @@
   }
 
   .gameComplete {
-    padding: 24px 16px;
+    padding: 28px 18px;
   }
 
   .gameComplete h2 {

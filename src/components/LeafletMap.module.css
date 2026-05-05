@@ -2,10 +2,13 @@
 .mapContainer {
   width: 100%;
   height: 600px;
-  border: 1px solid var(--border-secondary);
+  border: 2px solid var(--accent-primary);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 10px var(--shadow-color);
+  box-shadow:
+    0 6px 28px var(--shadow-color),
+    0 0 0 1px var(--border-secondary),
+    0 0 40px rgba(18, 85, 161, 0.06);
 }
 
 .map {
@@ -15,12 +18,13 @@
 
 /* Tooltip styling */
 .regionTooltip {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(10, 20, 40, 0.82);
   border: none;
-  border-radius: 3px;
-  color: white;
+  border-radius: 4px;
+  color: #E4ECF5;
   font-weight: bold;
-  padding: 5px 8px;
+  padding: 5px 10px;
+  letter-spacing: 0.02em;
 }
 
 /* Custom zoom controls styling */
@@ -33,11 +37,11 @@
 }
 
 .zoomButton {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   background-color: var(--surface-elevated);
   border: 1px solid var(--border-primary);
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,12 +49,15 @@
   font-weight: bold;
   cursor: pointer;
   color: var(--foreground);
-  box-shadow: 0 1px 5px var(--shadow-control);
-  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 8px var(--shadow-control);
+  transition: all 0.18s ease;
 }
 
 .zoomButton:hover {
   background-color: var(--surface-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow-control);
 }
 
 .resetButton {
