@@ -1,6 +1,6 @@
 // src/config/translations.js
 
-const translations = {
+export const translations = {
   en: {
     // App
     appTitle: "Greece Geography Quiz",
@@ -11,7 +11,6 @@ const translations = {
     quizType: "Quiz Type:",
     language: "Language:",
     startQuiz: "Start Quiz",
-    loading: "Loading...",
 
     // Quiz
     loadingData: "Loading quiz data...",
@@ -27,6 +26,7 @@ const translations = {
     next: "Next",
     skipQuestion: "Skip this question",
     previouslySkipped: "(Previously skipped)",
+    giveUp: "Give up",
 
     // Feedback
     correct: "Correct!",
@@ -38,8 +38,8 @@ const translations = {
 
     // Game complete
     quizComplete: "Quiz Complete!",
-    identifiedAll: (total, errorCount) =>
-      `You identified all ${total} regions with ${errorCount} errors.`,
+    quizEnded: "Quiz Ended",
+    foundCount: (found, total) => `You found ${found} of ${total} regions.`,
     yourRank: "Your rank: ",
     playAgain: "Play Again",
     changeQuizType: "Change Quiz Type",
@@ -57,11 +57,18 @@ const translations = {
     rankE: "Rural Wanderer",
     rankF: "Lost Wayfarer",
 
+    // Map
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    resetZoom: "Reset zoom",
+    mapLabel:
+      "Map of Greece. Use the arrow keys to move between regions and Enter to select one.",
+    unidentifiedRegion: "Unidentified region",
+
     // Errors
-    invalidQuizType: "Invalid quiz type",
-    reset: "Reset",
     fetchTimeout:
       "Data loading timed out. Please check your connection and try again.",
+    fetchFailed: "The quiz data could not be loaded. Please try again.",
   },
   el: {
     appTitle: "Κουίζ Γεωγραφίας Ελλάδας",
@@ -71,7 +78,6 @@ const translations = {
     quizType: "Τύπος Κουίζ:",
     language: "Γλώσσα:",
     startQuiz: "Έναρξη Κουίζ",
-    loading: "Φόρτωση...",
 
     loadingData: "Φόρτωση δεδομένων...",
     errorLoading: "Σφάλμα Φόρτωσης",
@@ -85,16 +91,17 @@ const translations = {
     next: "Επόμενο",
     skipQuestion: "Παράλειψη ερώτησης",
     previouslySkipped: "(Προηγουμένως παραλείφθηκε)",
+    giveUp: "Τα παρατάω",
 
     correct: "Σωστά!",
-    incorrect: (name) => `Λάθος! Προσπαθήστε ξανά να βρείτε ${name}`,
+    incorrect: (name) => `Λάθος! Προσπαθήστε ξανά: ${name}`,
 
     progress: (identified, skipped, remaining) =>
       `${identified} αναγνωρίστηκαν, ${skipped} παραλείφθηκαν, ${remaining} απομένουν`,
 
     quizComplete: "Το Κουίζ Ολοκληρώθηκε!",
-    identifiedAll: (total, errorCount) =>
-      `Αναγνωρίσατε και τις ${total} περιοχές με ${errorCount} λάθη.`,
+    quizEnded: "Το Κουίζ Τερματίστηκε",
+    foundCount: (found, total) => `Βρήκατε ${found} από ${total} περιοχές.`,
     yourRank: "Η κατάταξή σας: ",
     playAgain: "Παίξτε Ξανά",
     changeQuizType: "Αλλαγή Τύπου Κουίζ",
@@ -110,10 +117,16 @@ const translations = {
     rankE: "Περιπλανώμενος",
     rankF: "Χαμένος Οδοιπόρος",
 
-    invalidQuizType: "Μη έγκυρος τύπος κουίζ",
-    reset: "Επαναφορά",
+    zoomIn: "Μεγέθυνση",
+    zoomOut: "Σμίκρυνση",
+    resetZoom: "Επαναφορά εστίασης",
+    mapLabel:
+      "Χάρτης της Ελλάδας. Μετακινηθείτε μεταξύ των περιοχών με τα βέλη και επιλέξτε με το Enter.",
+    unidentifiedRegion: "Μη αναγνωρισμένη περιοχή",
+
     fetchTimeout:
       "Η φόρτωση δεδομένων έληξε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.",
+    fetchFailed: "Δεν ήταν δυνατή η φόρτωση των δεδομένων. Δοκιμάστε ξανά.",
   },
 };
 

@@ -1,5 +1,6 @@
 /* src/components/LeafletMap.module.css */
 .mapContainer {
+  position: relative;
   width: 100%;
   height: 600px;
   border: 2px solid var(--accent-primary);
@@ -21,7 +22,7 @@
   background-color: rgba(10, 20, 40, 0.82);
   border: none;
   border-radius: 4px;
-  color: #E4ECF5;
+  color: #e4ecf5;
   font-weight: bold;
   padding: 5px 10px;
   letter-spacing: 0.02em;
@@ -29,11 +30,13 @@
 
 /* Custom zoom controls styling */
 .customZoomControls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin-right: 10px;
-  margin-top: 10px;
 }
 
 .zoomButton {
@@ -72,6 +75,12 @@
 }
 
 /* Focus styles for keyboard accessibility */
+/* Chrome rings SVG regions focused by a mouse click too, so only show it for
+   keyboard focus. */
+.map :global(.leaflet-interactive:focus:not(:focus-visible)) {
+  outline: none;
+}
+
 .map :global(.leaflet-interactive:focus-visible) {
   outline: 2px solid var(--accent-primary);
   outline-offset: -2px;
@@ -80,9 +89,4 @@
 .map :global(.leaflet-container:focus-visible) {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
-}
-
-/* Hide the default Leaflet zoom controls */
-.map :global(.leaflet-control-zoom) {
-  display: none !important;
 }

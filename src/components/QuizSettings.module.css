@@ -20,7 +20,7 @@
 }
 
 .title::after {
-  content: '';
+  content: "";
   display: block;
   width: 56px;
   height: 3px;
@@ -42,13 +42,15 @@
   border-top: 4px solid var(--accent-gold);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 8px 32px var(--shadow-color), 0 2px 8px var(--shadow-gold);
+  box-shadow:
+    0 8px 32px var(--shadow-color),
+    0 2px 8px var(--shadow-gold);
 }
 
 .cardTitle {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 24px;
@@ -183,7 +185,11 @@
 .startButton {
   width: 100%;
   padding: 15px 30px;
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary) 0%,
+    var(--accent-primary-hover) 100%
+  );
   color: white;
   border: none;
   border-radius: 10px;
@@ -192,14 +198,18 @@
   cursor: pointer;
   margin-top: 8px;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 16px var(--shadow-accent), 0 1px 3px rgba(0,0,0,0.15);
+  box-shadow:
+    0 4px 16px var(--shadow-accent),
+    0 1px 3px rgba(0, 0, 0, 0.15);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .startButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-accent), 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow:
+    0 8px 24px var(--shadow-accent),
+    0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .startButton:active:not(:disabled) {

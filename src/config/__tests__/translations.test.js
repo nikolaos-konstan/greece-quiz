@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { t } from "../translations";
+import { t, translations } from "../translations";
 
 describe("t (translation helper)", () => {
   it("returns English string for known key", () => {
@@ -25,7 +25,7 @@ describe("t (translation helper)", () => {
 
   it("calls function keys with args for Greek", () => {
     const result = t("el", "incorrect", "Αττική");
-    expect(result).toBe("Λάθος! Προσπαθήστε ξανά να βρείτε Αττική");
+    expect(result).toBe("Λάθος! Προσπαθήστε ξανά: Αττική");
   });
 
   it("formats progress string with all counts", () => {
@@ -33,9 +33,15 @@ describe("t (translation helper)", () => {
     expect(result).toBe("10 identified, 2 skipped, 5 remaining");
   });
 
-  it("formats identifiedAll string", () => {
-    const result = t("en", "identifiedAll", 51, 3);
-    expect(result).toBe("You identified all 51 regions with 3 errors.");
+  it("formats foundCount string", () => {
+    expect(t("en", "foundCount", 12, 55)).toBe("You found 12 of 55 regions.");
+    expect(t("el", "foundCount", 12, 55)).toBe("Βρήκατε 12 από 55 περιοχές.");
+  });
+
+  it("defines the same keys in both languages", () => {
+    expect(Object.keys(translations.el).sort()).toEqual(
+      Object.keys(translations.en).sort()
+    );
   });
 
   it("returns appTitle for both languages", () => {

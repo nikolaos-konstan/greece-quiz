@@ -4,80 +4,33 @@
  * Transforms GeoJSON features into standardized region data
  * @param {Array} features - GeoJSON features array
  * @param {Object} config - Quiz configuration object
- * @returns {Array} Standardized region objects
+ * @returns {Array} Region objects with an id and a name per language
  */
 export const transformRegionData = (features, config) => {
   if (!features || !config) return [];
 
-  const { nameProperties } = config;
+  const { idProperty, nameProperties } = config;
 
-  return features.map((feature) => {
-    const properties = feature.properties;
-
-    return {
-      id: generateRegionId(feature, config),
-      nameGr: properties[nameProperties.el] || "",
-      nameEng: properties[nameProperties.en] || "",
-      originalProperties: properties,
-      geometry: feature.geometry,
-    };
-  });
+  return features.map(({ properties }) => ({
+    id: properties[idProperty] ?? "",
+    nameGr: properties[nameProperties.el] || "",
+    nameEng: properties[nameProperties.en] || "",
+  }));
 };
 
 /**
- * Generates a unique ID for a region based on available properties
- * @param {Object} feature - GeoJSON feature
- * @param {Object} config - Quiz configuration
- * @returns {string} Unique region identifier
- */
-const generateRegionId = (feature, config) => {
-  const props = feature.properties;
-
-  // Try different ID strategies based on quiz type
-  if (config.id === "prefectures") {
-    return props.ESYE_ID || props.NAME_ENG || props.NAME_GR;
-  } else if (config.id === "municipalities") {
-    return props.GID_3 || props.NAME_3 || props.NL_NAME_3;
-  }
-
-  // Fallback: use English name or first available property
-  return props.NAME_ENG || props.NAME_3 || Object.values(props)[0] || "unknown";
-};
-
-/**
- * Extracts region names for the current language
- * @param {Array} regionsData - Transformed region data
+ * Returns a region's name in the given language
+ * @param {Object} region - Transformed region
  * @param {string} language - Current language ('en' or 'el')
- * @returns {Array} Array of region names in specified language
+ * @returns {string} Region name
  */
-export const getRegionNames = (regionsData, language) => {
-  if (!regionsData || !language) return [];
-
-  return regionsData
-    .map((region) => (language === "en" ? region.nameEng : region.nameGr))
-    .filter((name) => name); // Remove empty names
-};
+export const getRegionName = (region, language) =>
+  language === "en" ? region.nameEng : region.nameGr;
 
 /**
- * Finds a region by name in the specified language
- * @param {Array} regionsData - Transformed region data
- * @param {string} regionName - Name to search for
- * @param {string} language - Language of the name
- * @returns {Object|null} Found region object or null
- */
-export const findRegionByName = (regionsData, regionName, language) => {
-  if (!regionsData || !regionName) return null;
-
-  return (
-    regionsData.find((region) => {
-      const nameToCompare = language === "en" ? region.nameEng : region.nameGr;
-      return nameToCompare === regionName;
-    }) || null
-  );
-};
-
-/**
- * Validates if region data is properly structured
+ * Validates region data. A region without a name or an id could never be asked
+ * or answered, which would make the quiz impossible to finish, so every region
+ * must have both names and a unique id.
  * @param {Array} regionsData - Region data to validate
  * @returns {boolean} True if data is valid
  */
@@ -86,10 +39,10 @@ export const validateRegionData = (regionsData) => {
     return false;
   }
 
-  // Check if at least some regions have both language names
-  const validRegions = regionsData.filter(
-    (region) => region.nameEng && region.nameGr
-  );
+  const ids = new Set(regionsData.map((region) => region.id));
 
-  return validRegions.length > 0;
+  return (
+    ids.size === regionsData.length &&
+    regionsData.every((region) => region.id && region.nameEng && region.nameGr)
+  );
 };

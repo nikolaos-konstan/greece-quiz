@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Greece Geography Quiz
 
-## Getting Started
+Find Greek prefectures (55) or municipalities (326) on an interactive map, in English or Greek.
 
-First, run the development server:
+- Skip a region with **Next** and it comes back after all the others. Once only skipped regions are left, **Next** moves between them and **Give up** ends the quiz.
+- The score starts at 100 and loses points for errors, skips and, when giving up, regions left unfound. The final score maps to a rank.
+- Playable by keyboard: Tab to the map, arrow keys to move between regions, Enter to select.
+
+## Development
+
+Requires Node.js 20.9 or later.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev         # http://localhost:3000
+npm run test:run    # unit tests
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Map data
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+The app loads `public/data/prefectures.geojson` and `public/data/municipalities.geojson`. These are generated from the source files in `data/raw/`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run data:build
+```
 
-## Learn More
+The build script gives every region an id and clean display names in both languages (corrections are in `scripts/regionNames.mjs`), simplifies the prefecture outlines, and rounds coordinates to about 10 m.
 
-To learn more about Next.js, take a look at the following resources:
+### Sources and licensing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `data/raw/nomoi_okxe.geojson`: Greek prefectures (pre-2011 nomoi), with ESYE codes.
+- `data/raw/dimoi.json`: Greek municipalities from [GADM](https://gadm.org). GADM data is free for academic and other non-commercial use, and may not be redistributed or used commercially without permission. Check the [GADM license](https://gadm.org/license.html) before deploying this app publicly or commercially.

@@ -1,4 +1,5 @@
 node_modules
 .next
 public/data
+data/raw
 package-lock.json

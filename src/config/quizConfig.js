@@ -8,10 +8,11 @@ export const QUIZ_TYPES = {
 export const QUIZ_CONFIGS = {
   [QUIZ_TYPES.PREFECTURES]: {
     id: QUIZ_TYPES.PREFECTURES,
-    dataPath: "/data/nomoi_okxe.geojson",
+    dataPath: "/data/prefectures.geojson",
+    idProperty: "id",
     nameProperties: {
-      en: "NAME_ENG",
-      el: "NAME_GR",
+      en: "name_en",
+      el: "name_el",
     },
     displayName: {
       en: "Prefectures",
@@ -25,11 +26,13 @@ export const QUIZ_CONFIGS = {
 
   [QUIZ_TYPES.MUNICIPALITIES]: {
     id: QUIZ_TYPES.MUNICIPALITIES,
-    dataPath: "/data/dimoi.json",
+    dataPath: "/data/municipalities.geojson",
+    idProperty: "id",
     nameProperties: {
-      en: "NAME_3",
-      el: "NL_NAME_3",
+      en: "name_en",
+      el: "name_el",
     },
+    attribution: "GADM",
     displayName: {
       en: "Municipalities",
       el: "Δήμοι",

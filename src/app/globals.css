@@ -1,112 +1,124 @@
 /* Standard breakpoints: 480px (small), 600px (mobile), 768px (tablet) */
 
 :root {
-  --background: #EDE6D8;
-  --foreground: #1A2340;
+  --background: #ede6d8;
+  --foreground: #1a2340;
 
   /* Surfaces */
-  --surface-primary: #E4DDD0;
-  --surface-secondary: #EAE4D8;
-  --surface-hover: #D8D0BE;
-  --surface-elevated: #FAFAF7;
+  --surface-primary: #e4ddd0;
+  --surface-secondary: #eae4d8;
+  --surface-hover: #d8d0be;
+  --surface-elevated: #fafaf7;
 
   /* Borders */
-  --border-primary: #C4B9A8;
-  --border-secondary: #D8D0BC;
-  --border-hover: #9A8E7D;
+  --border-primary: #c4b9a8;
+  --border-secondary: #d8d0bc;
+  --border-hover: #9a8e7d;
 
   /* Accent — Greek flag blue */
-  --accent-primary: #1255A1;
-  --accent-primary-hover: #0D4080;
+  --accent-primary: #1255a1;
+  --accent-primary-hover: #0d4080;
 
   /* Gold accent */
-  --accent-gold: #B8892A;
+  --accent-gold: #b8892a;
   --accent-gold-light: rgba(184, 137, 42, 0.12);
 
   /* Text */
-  --text-secondary: #4A5568;
-  --text-muted: #70604A;
+  --text-secondary: #4a5568;
+  --text-muted: #70604a;
 
   /* Feedback */
-  --color-success: #27AE60;
+  --color-success: #27ae60;
   --color-success-bg: rgba(39, 174, 96, 0.96);
-  --color-success-text: #0D4A22;
-  --color-error: #E74C3C;
+  --color-success-text: #0d4a22;
+  --color-error: #e74c3c;
   --color-error-bg: rgba(231, 76, 60, 0.96);
-  --color-error-text: #5C1010;
-  --color-error-heading: #C0392B;
-  --color-warning: #D4820A;
-  --color-warning-text: #7D4500;
+  --color-error-text: #5c1010;
+  --color-error-heading: #c0392b;
+  --color-warning: #d4820a;
+  --color-warning-text: #7d4500;
 
   /* Buttons */
-  --btn-secondary-bg: #7A8B9A;
-  --btn-secondary-hover: #5A6B7A;
-  --btn-disabled-bg: #C4B9A8;
+  --btn-secondary-bg: #7a8b9a;
+  --btn-secondary-hover: #5a6b7a;
+  --btn-disabled-bg: #c4b9a8;
 
   /* Map */
-  --map-region-default: #C8D8E8;
-  --map-region-correct: #27AE60;
-  --map-region-incorrect: #E74C3C;
-  --map-border: #1255A1;
+  --map-region-default: #c8d8e8;
+  --map-region-correct: #27ae60;
+  --map-region-incorrect: #e74c3c;
+  --map-border: #1255a1;
 
   /* Shadows */
-  --shadow-color: rgba(26, 35, 64, 0.10);
-  --shadow-strong: rgba(26, 35, 64, 0.20);
+  --shadow-color: rgba(26, 35, 64, 0.1);
+  --shadow-strong: rgba(26, 35, 64, 0.2);
   --shadow-control: rgba(26, 35, 64, 0.24);
   --shadow-accent: rgba(18, 85, 161, 0.32);
-  --shadow-gold: rgba(184, 137, 42, 0.30);
+  --shadow-gold: rgba(184, 137, 42, 0.3);
 
-  /* Display font */
-  --font-display: var(--font-cinzel), 'Palatino Linotype', Georgia, serif;
+  /* Fonts */
+  --font-display: var(--font-cinzel), "Palatino Linotype", Georgia, serif;
+  --font-body:
+    var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+}
+
+/* Geist and Cinzel have no Greek letters. Their automatic fallbacks (local
+   Arial and Times) do, so the Greek fonts must come first to be used at all. */
+:root:lang(el) {
+  --font-display: var(--font-gfs-didot), "Palatino Linotype", Georgia, serif;
+  --font-body:
+    var(--font-noto-sans), system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #090F1E;
-    --foreground: #E4ECF5;
+    --background: #090f1e;
+    --foreground: #e4ecf5;
 
-    --surface-primary: #0E1A30;
+    --surface-primary: #0e1a30;
     --surface-secondary: #122036;
     --surface-hover: #182840;
     --surface-elevated: #122036;
 
-    --border-primary: #253A58;
+    --border-primary: #253a58;
     --border-secondary: #182840;
-    --border-hover: #38568A;
+    --border-hover: #38568a;
 
-    --accent-primary: #4A9EF5;
-    --accent-primary-hover: #2E86E8;
+    --accent-primary: #4a9ef5;
+    --accent-primary-hover: #2e86e8;
 
-    --accent-gold: #E8B84A;
+    --accent-gold: #e8b84a;
     --accent-gold-light: rgba(232, 184, 74, 0.15);
 
-    --text-secondary: #8DA4C0;
-    --text-muted: #5A7A9A;
+    --text-secondary: #8da4c0;
+    --text-muted: #5a7a9a;
 
-    --color-success: #2ECC71;
+    --color-success: #2ecc71;
     --color-success-bg: rgba(46, 204, 113, 0.9);
-    --color-success-text: #A8F0C8;
-    --color-error: #E74C3C;
+    --color-success-text: #a8f0c8;
+    --color-error: #e74c3c;
     --color-error-bg: rgba(231, 76, 60, 0.9);
-    --color-error-text: #FFB5AE;
-    --color-error-heading: #F15A4A;
-    --color-warning: #F39C12;
-    --color-warning-text: #F8D07A;
+    --color-error-text: #ffb5ae;
+    --color-error-heading: #f15a4a;
+    --color-warning: #f39c12;
+    --color-warning-text: #f8d07a;
 
-    --btn-secondary-bg: #253A58;
-    --btn-secondary-hover: #38568A;
+    --btn-secondary-bg: #253a58;
+    --btn-secondary-hover: #38568a;
     --btn-disabled-bg: #182840;
 
     --map-region-default: #182840;
-    --map-region-correct: #2ECC71;
-    --map-region-incorrect: #E74C3C;
-    --map-border: #4A9EF5;
+    --map-region-correct: #2ecc71;
+    --map-region-incorrect: #e74c3c;
+    --map-border: #4a9ef5;
 
     --shadow-color: rgba(0, 0, 0, 0.45);
     --shadow-strong: rgba(0, 0, 0, 0.62);
     --shadow-control: rgba(0, 0, 0, 0.68);
     --shadow-accent: rgba(74, 158, 245, 0.45);
-    --shadow-gold: rgba(232, 184, 74, 0.40);
+    --shadow-gold: rgba(232, 184, 74, 0.4);
   }
 }
 
@@ -123,8 +135,12 @@
 }
 
 @keyframes progressShimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 @keyframes gameCompleteReveal {
@@ -147,8 +163,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -167,5 +182,15 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

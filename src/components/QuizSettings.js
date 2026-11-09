@@ -9,7 +9,6 @@ const QuizSettings = ({
   onQuizTypeChange,
   onLanguageChange,
   onStartQuiz,
-  isLoading,
 }) => {
   const quizOptions = Object.values(QUIZ_CONFIGS);
 
@@ -57,6 +56,8 @@ const QuizSettings = ({
           </legend>
           <div className={styles.languageToggle}>
             <button
+              type="button"
+              aria-pressed={selectedLanguage === "en"}
               className={`${styles.languageButton} ${
                 selectedLanguage === "en" ? styles.active : ""
               }`}
@@ -65,6 +66,8 @@ const QuizSettings = ({
               English
             </button>
             <button
+              type="button"
+              aria-pressed={selectedLanguage === "el"}
               className={`${styles.languageButton} ${
                 selectedLanguage === "el" ? styles.active : ""
               }`}
@@ -77,13 +80,11 @@ const QuizSettings = ({
 
         {/* Start Quiz Button */}
         <button
+          type="button"
           className={styles.startButton}
           onClick={onStartQuiz}
-          disabled={isLoading}
         >
-          {isLoading
-            ? t(selectedLanguage, "loading")
-            : t(selectedLanguage, "startQuiz")}
+          {t(selectedLanguage, "startQuiz")}
         </button>
       </div>
     </div>
